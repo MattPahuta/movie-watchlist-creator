@@ -1,6 +1,6 @@
 # Movie Watchlist Creator - Scrimba FEWD Project
 
-This is a solution to the Movie Watchlist Creator solo project, as part of the Scrimba Frontend Developer Career Path, featuring interactivity the [Open Movie Database API](https://www.omdbapi.com/).
+This is a solution to the Movie Watchlist Creator solo project, as part of the Scrimba Frontend Developer Career Path, featuring local storage and the [Open Movie Database API](https://www.omdbapi.com/).
 
 ## Overview
 

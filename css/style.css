@@ -1,0 +1,91 @@
+/* Custom Properties */
+:root {
+  /* colors */
+  --clr-black: #1C1C1C;
+  --clr-white: #FFFFFF;
+  --clr-gray: #6B7280;
+
+  /* font sizes */
+  /* 12px (results meta), 14px (body), 18px (results - h2), 44px (h1) */
+  --fs-600: 2.75rem;
+  --fs-500: 1.125rem;
+  --fs-400: 0.875rem;   
+  --fs-300: 0.75rem; 
+  /* font-family: 'Fira Sans', sans-serif; 400, 500, 700 */
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+} 
+
+/* General styles */
+body {
+  height: 100vh;
+  font-family: 'Fira Sans', sans-serif;
+  font-size: var(--fs-400);
+  background-color: var(--clr-black);
+  color: var(--clr-white);
+  padding: 0 2rem;
+}
+
+.wrapper {
+  margin: 0 auto;
+  max-width: 800px;
+  margin-top: 75px;
+}
+
+header {
+  background-color: var(--clr-gray);
+  padding: 6rem 0;
+  align-items: center;
+  justify-content: space-around;
+}
+
+h1 {
+  font-size: var(--fs-600);
+  font-weight: 700;
+}
+
+header a {
+  color: var(--clr-white);
+  text-decoration: none;
+}
+
+header a:hover,
+header a:active {
+  color: violet;
+  text-decoration: underline;
+}
+
+/* utility classes */
+
+.flex {
+  display: flex;
+}
