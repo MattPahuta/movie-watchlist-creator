@@ -68,6 +68,8 @@ header {
   justify-content: space-around;
 }
 
+
+
 h1 {
   font-size: var(--fs-600);
   font-weight: 700;
@@ -88,4 +90,18 @@ header a:active {
 
 .flex {
   display: flex;
+}
+
+/* Search results styles - movie cards */
+.search-results {
+  background-color: var(--clr-white);
+  color: var(--clr-gray);
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-results img {
+  max-width: 300px;
+  width: 100%;
+  
 }
