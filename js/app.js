@@ -58,10 +58,25 @@ function renderMovies(movies) {
   let moviesHtml = '';
 
   for (let movie of movies) {
-    moviesHtml += `<h2>${movie.Title}</h2>`
+    moviesHtml += 
+    `
+    <div class="movie-card">
+    <img src="${movie.Poster}" alt="" class="movie-img">
+     <div class="card-content">
+      <div class="card-header">
+        <h2 class="card-title">${movie.Title}</h2>
+        <p class="rating"><i class="fa-solid fa-star"></i><span>${movie.imdbRating}</span></p>
+    </div>
+      <div class="card-meta">
+        <span class="card-runtime">${movie.Runtime}</span>
+        <span class="card-genre">${movie.Genre}</span>
+        <span class="card-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</span>
+      </div>
+      <p class="card-body">${movie.Plot}</p>
+    </div>
+    </div>
+  `
   }
-
-
   movieResultsContainer.innerHTML = moviesHtml;
 
 }
