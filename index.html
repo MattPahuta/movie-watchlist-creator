@@ -13,27 +13,30 @@
 </head>
 <body>
   <header class="flex">
-    <h1>Find your film</h1>
-    <h2><a href="watchlist.html">My Watchlist</a></h2>
-    <!-- <img src="./images/header.jpg" alt=""> -->
+
+    <div class="title-container">
+      <h1>Find your film</h1>
+      <h2><a href="watchlist.html">My Watchlist</a></h2>
+    </div>
+
+    <form id="search-form" class="search-form">
+      <span class="fa-solid fa-magnifying-glass"></span>
+      <input id="title-input" type="text" name="movieTitle" placeholder="Search for a movie">
+      <button type="submit" id="search-btn">Search</button>
+    </form>
+
   </header>
 
   <main class="wrapper">
-    <section id="form-container" class="form-container">
-      <form id="search-form" class="search-form">
-        <span class="fa-solid fa-magnifying-glass"></span>
-        <input id="title-input" type="text" name="movieTitle" placeholder="Search for a movie">
-        <button id="search-btn">Search</button>
-      </form>
-    </section>
-    <section class="results">
-      <!-- add placeholder icon     -->
-      <div id="search-results" class="search-results flex">
 
-        <div class="flex placeholder">
-          <span class="fa-solid fa-film"></span>
-          <span>Start exploring</span>
-        </div>
+    <section id="search-results" class=" results search-results">
+
+      <div class="flex placeholder">
+        <span class="fa-solid fa-film"></span>
+        <span>Start exploring</span>
+      </div>
+
+
 
         <!-- <div class="movie-card">
           <img src="./images/sample-poster.jpg" alt="" class="movie-img">
@@ -51,9 +54,10 @@
           </div>
         </div> -->
 
-      </div>
+
     </section>
   </main>
+  
   <footer>
 
   </footer>

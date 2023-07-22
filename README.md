@@ -12,9 +12,14 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 - watchlist.html loads and displays data from local storage
 - Watchlist toggle - add to watchlist or indicate movie already saved to watchlist
 
+### Future enhancements
+
+- Light/dark mode theme preferences
+- Link to IMDB page of movie when clicked
+
 ### Built with 
 
 - Semantic HTML5 markup
 - Flexbox
 - CSS Grid
-- Vanilla JavaScript
+- JavaScript
