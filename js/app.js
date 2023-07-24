@@ -9,7 +9,7 @@ const movieResultsContainer = document.getElementById('search-results');
 
 // make request to omdb api for movie titles
 async function searchMovies() {
-  const apiKey = '9da4b049';
+  const apiKey = '9da4b049'; // move out of the function?
 
   const searchTerm = titleInput.value;
   const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&s=${searchTerm}`)
@@ -18,7 +18,7 @@ async function searchMovies() {
 
   const searchResults = []
 
-  for (let movie of data.Search) {
+  for (let movie of data.Search) { // use map for this?
     const res = await fetch(`http://www.omdbapi.com/?apikey=9da4b049&i=${movie.imdbID}`);
     const data = await res.json();
     searchResults.push(data)
@@ -40,7 +40,7 @@ async function searchMovies() {
 //   refineMovieDetails(movieResults)
 // }
 
-function refineMovieDetails(moviesWithDetails) {
+function refineMovieDetails(moviesWithDetails) { // move this logic into the render function
   // destructure movies array with props ???
   console.log(moviesWithDetails)
   const moviesRefined = [];

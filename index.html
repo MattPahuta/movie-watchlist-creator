@@ -12,22 +12,22 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header class="flex">
+  <header class="header">
 
     <div class="title-container">
-      <h1>Find your film</h1>
-      <h2><a href="watchlist.html">My Watchlist</a></h2>
+      <h1 class="page-title">Find your film</h1>
+      <h2 class="watchlist-title"><a href="watchlist.html">My Watchlist</a></h2>
     </div>
 
-    <form id="search-form" class="search-form">
-      <span class="fa-solid fa-magnifying-glass"></span>
-      <input id="title-input" type="text" name="movieTitle" placeholder="Search for a movie">
-      <button type="submit" id="search-btn">Search</button>
-    </form>
+    <div class="search-group">
+      <label for="search-input" class="sr-only">Movie Search</label>
+      <input id="search-input" class="search-input" type="text" placeholder="Search for a movie">
+      <button type="submit" id="search-btn" class="btn">Search</button>
+    </div>
 
   </header>
 
-  <main class="wrapper">
+  <main>
 
     <section id="search-results" class=" results search-results">
 
