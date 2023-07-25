@@ -97,6 +97,7 @@ body {
 }
 
 
+
 /* Header Styles */
 .page-title {
   font-size: var(--fs-600);
@@ -105,12 +106,13 @@ body {
 }
 
 .header {
+  min-height: 25vh;
 	background-color: var(--clr-gray);
   /* placeholder header image */
 	background-image: url("../images/showcase-bg.jpg");
 	background-repeat: no-repeat;
 	background-size: cover;
-	padding: 2.5rem 0.5rem;
+	/* padding: 2.5rem 0.5rem; */
 
   display: flex;
   flex-direction: column;
@@ -155,13 +157,16 @@ header a {
 
 /* Search Form Styles */
 .search-group {
-  width: 80%;
-  max-width: 500px;
+  margin-top: -33px;
+  margin-inline: auto;
+  width: 90%;
+  max-width: 550px;
   padding: .5rem;
 
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
 
   background: var(--clr-pure-white);
   border-radius: 15px;
@@ -181,7 +186,7 @@ header a {
   border: none;
   border-radius: 5px;
 
-  /* transition: 180ms box-shadow ease-in-out; */
+
 }
 
 
@@ -190,6 +195,7 @@ header a {
   /* border-color: var(--input-focus); */
   /* box-shadow: 0 0 0 3px hsla(166, 73%, 88%, 1); */
   outline: 3px solid transparent;
+
 }
 
 .btn {
@@ -208,21 +214,23 @@ header a {
 	align-items: center;
 	justify-content: center;
 	align-self: start;
+  /* for hover/active effect */
 	transition: 200ms all ease-in-out;
 }
 
 
+@media (min-width: 600px) {
+  .search-group {
 
-/* utility classes */
-
-.flex {
-  display: flex;
+  }
 }
 
 
+
 /* Search results styles - movie cards */
-.placeholder {
+.film-placeholder {
   color: #DFDDDD;
+  display: flex;
   flex-direction: column;
   align-self: center;
   align-items: center;
