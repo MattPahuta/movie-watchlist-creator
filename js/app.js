@@ -4,14 +4,21 @@
   http://www.omdbapi.com/?t=batman
 */
 
-const titleInput = document.getElementById('title-input');
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
 const movieResultsContainer = document.getElementById('search-results');
+
+searchBtn.addEventListener('click', () => {
+  console.log('clicked')
+  searchMovies();
+  searchInput.value = '';
+})
 
 // make request to omdb api for movie titles
 async function searchMovies() {
   const apiKey = '9da4b049'; // move out of the function?
 
-  const searchTerm = titleInput.value;
+  const searchTerm = searchInput.value;
   const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&s=${searchTerm}`)
   const data = await res.json();
   console.log('Raw search: ', data.Search); // debug
@@ -104,10 +111,4 @@ function getWatchlistMovies() {
 
 }
 
-// listen on form submit to query api
-document.getElementById('search-form').addEventListener('submit', (e) => {
-  e.preventDefault();
-  searchMovies();
-  titleInput.value = '';
-})
 
