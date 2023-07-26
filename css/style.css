@@ -154,15 +154,14 @@ body {
   }
 }
 
-
-header a {
-  color: var(--clr-white);
+.watchlist-title a {
+  color: var(--clr-silver);
   text-decoration: none;
+  transition: 200ms all ease-in-out;
 }
 
 .watchlist-title a:hover {
-  color: violet;
-  text-decoration: underline;
+  color: var(--clr-mint-green);
 }
 
 /* Search Form Styles */
@@ -246,13 +245,6 @@ header a {
 }
 
 
-@media (min-width: 600px) {
-  .search-group {
-
-  }
-}
-
-
 
 /* Search results styles - movie cards */
 .film-placeholder {
@@ -272,13 +264,14 @@ header a {
 
 /* use Grid for the results */
 .results-grid {
-
-  padding: 2rem 0;
+  margin-inline: auto;
+  max-width: 1280px;
+  padding: 2rem 1em;
   /* background-color: var(--clr-white); */
 
   display: grid;
-  /* grid-template-columns: repeat(auto-fit, 
-         minmax(min(18rem, 100%), 1fr)); */
+  grid-template-columns: repeat(auto-fit, 
+         minmax(min(20rem, 100%), 1fr));
   justify-items: center;
 
   gap: 1rem;
@@ -301,7 +294,8 @@ header a {
 
 .card {
   min-height: 30rem;
-  max-width: 21rem;
+  /* max-width: 21rem; */
+  max-width: 25rem;
 
   border: 3px solid var(--clr-ucla-blue);
   border-radius: 10px;
@@ -309,7 +303,7 @@ header a {
   flex-direction: column;
 }
 
-.movie-img {
+.card-img {
   width: 100%;
   object-fit: cover;
 
@@ -375,7 +369,7 @@ header a {
 }
 
 .card-btn:hover {
-  color: var(--clr-ucla-blue);
+  color: var(--clr-mint-green);
 }
 
 
@@ -383,6 +377,8 @@ header a {
 .card-body {
   font-size: var(--fs-400);
   line-height: 1.6;
-  color: var(--clr-gray);
+  color: var(--clr-silver);
 }
+
+
 
