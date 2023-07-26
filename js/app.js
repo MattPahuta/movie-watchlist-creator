@@ -35,17 +35,7 @@ async function searchMovies() {
   refineMovieDetails(searchResults)
 }
 
-// additional fetch request for returned movies, getting movie details by IMDb ID ('i' param)
-// async function getMovieDetails(moviesArray) {
-//   const movieResults = [];
-//   for (let movie of moviesArray) {
-//     const res = await fetch(`http://www.omdbapi.com/?apikey=9da4b049&i=${movie.imdbID}`)
-//     const data = await res.json();
-//     movieResults.push(data)
-//   }
 
-//   refineMovieDetails(movieResults)
-// }
 
 function refineMovieDetails(moviesWithDetails) { // move this logic into the render function
   // destructure movies array with props ???
@@ -112,3 +102,17 @@ function getWatchlistMovies() {
 }
 
 
+// *** Previous Code **** //
+// ********************** //
+
+// additional fetch request for returned movies, getting movie details by IMDb ID ('i' param)
+// async function getMovieDetails(moviesArray) {
+//   const movieResults = [];
+//   for (let movie of moviesArray) {
+//     const res = await fetch(`http://www.omdbapi.com/?apikey=9da4b049&i=${movie.imdbID}`)
+//     const data = await res.json();
+//     movieResults.push(data)
+//   }
+
+//   refineMovieDetails(movieResults)
+// }
