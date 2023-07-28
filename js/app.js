@@ -19,7 +19,11 @@ document.addEventListener('click', e => {
   }
 
   // if 'add to watchlist btn' clicked - remove 'addEventHandlers' function 
-  
+  if (e.target.classList.contains('card-btn')) {
+    const filmToSave = e.target.dataset.film; // imdbID as unique data attribute
+    // console.log(e.target)
+    saveToWatchlist(filmToSave); // call saveToWatchlist, passing in imdbID
+  }
 
 
 })
@@ -46,13 +50,76 @@ async function searchByTitle() {
 }
 
 
+
+
+
+// save selected movies to localStorage
+function saveToWatchlist(filmToSave) {
+
+  // ToDo: check if film is already in the watchlist
+  //  if so, display message (alert for dev, modal (html?) for prod)
+  //  if not, save filmToSave (target film imdbID) to local storage
+  //  note: save only imdbID (filmToSave) in local storage
+  //  change watchlist card button icon to 'minus' 
+
+
+
+  // let or const?
+  let watchlistFromStorage = getWatchlistFromStorage(); // check for watchlisted films
+  console.log(watchlistFromStorage); // debug
+  // *** ToDo: Make this a ternary statement
+  if (watchlistFromStorage.includes(filmToSave)) {
+    alert('Film is already saved to watchlist');
+  } else {   
+    console.log('saving to watchlist... ', filmToSave) 
+    watchlistFromStorage.push(filmToSave); // push film (imdbID) to storage array
+    // set local storage array, convert to JSON
+    localStorage.setItem('watchlistFilms', JSON.stringify(watchlistFromStorage));
+  }
+
+
+}
+
+// pull from localStorage to populate watchlist
+function getWatchlistFromStorage() {
+  let watchlist; 
+
+  // ToDo: make below a ternary statement
+  if (!localStorage.getItem('watchlistFilms')) { // if there is no watchlist
+    watchlist = []; // set watchlistFromStorage to []
+  } else { // otherwise, get the watchlist from ls
+    watchlist = JSON.parse(localStorage.getItem('watchlistFilms'));
+  }
+
+  return watchlist; // empty array or the array from local storage
+
+}
+
+// check search results for films already in watchlist
+function checkForWatchlistedResults() {
+
+}
+
+
+
+// remove film from watchlist
+function removeFromWatchlist() {
+
+}
+
+// ToDo: Additional Functions:
+// clear all watchlist items? 
+// show spinner for loading films
+// hide spinner for loading films
+// show/hide error modal
+
 function render(resultsData) {
   const resultsGrid = document.getElementById('results-grid');
   const filmPlaceholder = document.getElementById('film-placeholder');
 
   filmPlaceholder.style.display = 'none';
 
-  // build movie cards based on search results received
+  // build film cards based on search results received
   console.log('rendering: ', resultsData); // debug
 
   resultsData.forEach(result => {
@@ -83,76 +150,8 @@ function render(resultsData) {
     resultsGrid.appendChild(card)
   });
 
-  addWatchlistHandlers();
 
 }
-
-// add event listeners to watchlist buttons
-function addWatchlistHandlers() {
-  const watchlistBtns = document.querySelectorAll('.card-btn');
-
-  watchlistBtns.forEach(btn => {
-    btn.addEventListener('click', saveToWatchlist);
-  })
-
-}
-
-// save selected movies to localStorage
-function saveToWatchlist(e) {
-
-  // below should go to event handler for watchlist card buttons
-  const filmToSave = e.target.dataset.film; // imdbID as unique data attribute
-
-  // ToDo: check if film is already in the watchlist
-  //  if so, display message (alert for dev, modal (html?) for prod)
-  //  if not, save filmToSave (target film imdbID) to local storage
-  //  note: save only imdbID (filmToSave) in local storage
-
-
-
-
-  console.log('saving to watchlist... ', filmToSave)
-
-
-  let filmsFromStorage = getWatchlistFilms(); // check for watchlisted films
-
-  // filmsFromStorage.push(film); // add film to storage array
-  // localStorage.setItem('films', JSON.stringifyf(filmsFromStorage)); // convert and save to ls
-
-
-}
-
-// pull from localStorage to populate watchlist
-function getWatchlistFilms() {
-  let filmsFromStorage; 
-
-  if (!localStorage.getItem('films')) {
-    filmsFromStorage = [];
-  } else {
-    filmsFromStorage = JSON.parse(localStorage.getItem('films'));
-  }
-
-  return filmsFromStorage;
-
-}
-
-// check search results for films already in watchlist
-function checkForWatchlistedResults() {
-
-}
-
-
-
-// remove film from watchlist
-function removeFromWatchlist() {
-
-}
-
-// ToDo: Additional Functions:
-// clear all watchlist items? 
-// show spinner for loading films
-// hide spinner for loading films
-// show/hide error modal
 
 
 
