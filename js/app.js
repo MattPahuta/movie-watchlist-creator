@@ -4,20 +4,34 @@
   http://www.omdbapi.com/?t=batman
 */
 
-const searchInput = document.getElementById('search-input');
-const searchBtn = document.getElementById('search-btn');
 
 
-searchBtn.addEventListener('click', () => {
-  searchMovies();
-  searchInput.value = '';
+// global document event listener 
+// ToDo: Make this an init/event function, call on page load? 
+// *** Reviewer question: Thoughts on how to implement multiple handlers on a page?
+document.addEventListener('click', e => {
+  // if Search button is clicked
+  if (e.target.id === 'search-btn') {
+    const searchInput = document.getElementById('search-input');
+    console.log('Searching the OMDB...')
+    searchByTitle();
+    searchInput.value = '';
+  }
+
+  // if 'add to watchlist btn' clicked - remove 'addEventHandlers' function 
+  
+
+
 })
 
+
+
 // make request to omdb api for movie titles
-async function searchMovies() {
+async function searchByTitle() {
   const apiKey = '9da4b049'; // move out of the function?
 
-  const searchTerm = searchInput.value;
+  // const searchTerm = searchInput.value;
+  const searchTerm = document.getElementById('search-input').value;
   const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&s=${searchTerm}`)
   const data = await res.json();
 
@@ -47,6 +61,8 @@ function render(resultsData) {
     // build result card
     const card = document.createElement('div');
     card.classList.add('card');
+
+    // ToDo: Handle props with 'N/A' - placeholder div for posters ('poster not available'), etc.
 
     card.innerHTML = `
       <a href="https://www.imdb.com/title/${imdbID}" target="_blank"><img src="${Poster}" alt="${Title} poster" class="card-img"></a>
@@ -84,9 +100,16 @@ function addWatchlistHandlers() {
 // save selected movies to localStorage
 function saveToWatchlist(e) {
 
+  // below should go to event handler for watchlist card buttons
   const filmToSave = e.target.dataset.film; // imdbID as unique data attribute
 
-  // savedFilmObj = { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot }
+  // ToDo: check if film is already in the watchlist
+  //  if so, display message (alert for dev, modal (html?) for prod)
+  //  if not, save filmToSave (target film imdbID) to local storage
+  //  note: save only imdbID (filmToSave) in local storage
+
+
+
 
   console.log('saving to watchlist... ', filmToSave)
 
@@ -119,8 +142,31 @@ function checkForWatchlistedResults() {
 }
 
 
+
+// remove film from watchlist
+function removeFromWatchlist() {
+
+}
+
+// ToDo: Additional Functions:
+// clear all watchlist items? 
+// show spinner for loading films
+// hide spinner for loading films
+// show/hide error modal
+
+
+
 // *** Previous Code **** //
 // ********************** //
+
+// const searchInput = document.getElementById('search-input');
+// const searchBtn = document.getElementById('search-btn');
+
+
+// searchBtn.addEventListener('click', () => {
+//   searchMovies();
+//   searchInput.value = '';
+// })
 
 // additional fetch request for returned movies, getting movie details by IMDb ID ('i' param)
 // async function getMovieDetails(moviesArray) {
