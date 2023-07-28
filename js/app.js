@@ -19,10 +19,14 @@ document.addEventListener('click', e => {
   }
 
   // if 'add to watchlist btn' clicked - remove 'addEventHandlers' function 
-  if (e.target.classList.contains('card-btn')) {
+  if (e.target.classList.contains('card-add-btn')) {
     const filmToSave = e.target.dataset.film; // imdbID as unique data attribute
     // console.log(e.target)
     saveToWatchlist(filmToSave); // call saveToWatchlist, passing in imdbID
+  }
+
+  if (e.target.classList.contains('card-remove-btn')) {
+    console.log('Removing from watchlist...')
   }
 
 
@@ -49,6 +53,42 @@ async function searchByTitle() {
   render(searchResults)
 }
 
+// Get watchlist content from API 
+async function fetchWatchlistContent() {
+  const apiKey = '9da4b049'; // move out of the function?
+  // get the watchlist from local storage - an array of imdbIDs 
+  const watchlist = getWatchlistFromStorage(); 
+
+  // check that watchlist in local storage has a length > 0
+  if (watchlist.length > 0) { // or, just watchlist.length? 
+    // hide the placeholder content on watchlist.html
+    // const watchlistContent = watchlist.map(async function(film) {
+    //   const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&i=${film}`);
+    //   const data = await res.json();
+    //   return data;
+    // })
+    // console.log('Watchlist content: ', watchlistContent)
+
+
+    const watchlistContent = [];
+
+    for (film of watchlist) {
+      const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&i=${film}`);
+      const data = await res.json();
+      console.log(data)
+    }
+
+  } else {
+    console.log('No watchlist data')
+  }
+
+  
+  // map over local storage watchlist to create a complete film array
+  // - fetch request for each film 
+  // render the watchlist 
+
+}
+
 
 
 
@@ -56,19 +96,16 @@ async function searchByTitle() {
 // save selected movies to localStorage
 function saveToWatchlist(filmToSave) {
 
-  // ToDo: check if film is already in the watchlist
-  //  if so, display message (alert for dev, modal (html?) for prod)
-  //  if not, save filmToSave (target film imdbID) to local storage
+  // ToDo:
   //  note: save only imdbID (filmToSave) in local storage
-  //  change watchlist card button icon to 'minus' 
-
-
+  //  change watchlist card button icon to 'minus' ?
+  //  add modal confirming film title saved to watchlist
 
   // let or const?
   let watchlistFromStorage = getWatchlistFromStorage(); // check for watchlisted films
-  console.log(watchlistFromStorage); // debug
+  console.log('LS Watchlist: ', watchlistFromStorage); // debug
   // *** ToDo: Make this a ternary statement
-  if (watchlistFromStorage.includes(filmToSave)) {
+  if (watchlistFromStorage.includes(filmToSave)) { // check if film already in watchlist
     alert('Film is already saved to watchlist');
   } else {   
     console.log('saving to watchlist... ', filmToSave) 
@@ -96,6 +133,7 @@ function getWatchlistFromStorage() {
 }
 
 // check search results for films already in watchlist
+// - possibily use this to apply icons/disable add-to-watchlist buttons
 function checkForWatchlistedResults() {
 
 }
@@ -103,9 +141,20 @@ function checkForWatchlistedResults() {
 
 
 // remove film from watchlist
-function removeFromWatchlist() {
+function removeFromWatchlist(filmToRemove) {
+  // filmToRemove = imdbID (unique ID saved in watchlist ls array)
+  let watchlistFromStorage = getWatchlistFromStorage();
+
+  // filter out the filmToRemove
+  watchlistFromStorage = watchlistFromStorage.filter(film => film !== filmToRemove);
+  // reset the watchlist in local storage
+  localStorage.setItem('watchlistFilms', JSON.stringify(watchlistFromStorage));
+
 
 }
+
+
+
 
 // ToDo: Additional Functions:
 // clear all watchlist items? 
@@ -113,7 +162,7 @@ function removeFromWatchlist() {
 // hide spinner for loading films
 // show/hide error modal
 
-function render(resultsData) {
+function render(resultsData) { // make this more generic => data, filmData, etc.
   const resultsGrid = document.getElementById('results-grid');
   const filmPlaceholder = document.getElementById('film-placeholder');
 
@@ -130,6 +179,7 @@ function render(resultsData) {
     card.classList.add('card');
 
     // ToDo: Handle props with 'N/A' - placeholder div for posters ('poster not available'), etc.
+    // ToDo: Add logic to add minus icon instead of plus if rendering the watchlist
 
     card.innerHTML = `
       <a href="https://www.imdb.com/title/${imdbID}" target="_blank"><img src="${Poster}" alt="${Title} poster" class="card-img"></a>
@@ -142,7 +192,7 @@ function render(resultsData) {
           <span class="card-runtime">${Runtime}</span>
           <span class="card-genre">${Genre}</span>
         </div>
-        <button data-film="${imdbID}" class="btn card-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</button>
+        <button data-film="${imdbID}" class="btn card-add-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</button>
         <p class="card-body">${Plot}</p>
       </div>
       `
