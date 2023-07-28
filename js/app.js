@@ -9,7 +9,6 @@ const searchBtn = document.getElementById('search-btn');
 
 
 searchBtn.addEventListener('click', () => {
-  console.log('clicked')
   searchMovies();
   searchInput.value = '';
 })
@@ -35,19 +34,22 @@ async function searchMovies() {
 
 function render(resultsData) {
   const resultsGrid = document.getElementById('results-grid');
+  const filmPlaceholder = document.getElementById('film-placeholder');
+
+  filmPlaceholder.style.display = 'none';
 
   // build movie cards based on search results received
   console.log('rendering: ', resultsData); // debug
 
   resultsData.forEach(result => {
-    const { Poster, Title, imdbRating, Runtime, Genre, Plot } = result;
+    const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
 
     // build result card
     const card = document.createElement('div');
     card.classList.add('card');
 
     card.innerHTML = `
-      <img src="${Poster}" alt="${Title} poster" class="card-img">
+      <a href="https://www.imdb.com/title/${imdbID}" target="_blank"><img src="${Poster}" alt="${Title} poster" class="card-img"></a>
       <div class="card-content">
         <div class="card-header">
           <h3 class="card-title">${Title}</h3>
@@ -57,7 +59,7 @@ function render(resultsData) {
           <span class="card-runtime">${Runtime}</span>
           <span class="card-genre">${Genre}</span>
         </div>
-        <button class="btn card-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</button>
+        <button data-film="${imdbID}" class="btn card-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</button>
         <p class="card-body">${Plot}</p>
       </div>
       `
@@ -65,16 +67,54 @@ function render(resultsData) {
     resultsGrid.appendChild(card)
   });
 
+  addWatchlistHandlers();
+
 }
 
+// add event listeners to watchlist buttons
+function addWatchlistHandlers() {
+  const watchlistBtns = document.querySelectorAll('.card-btn');
+
+  watchlistBtns.forEach(btn => {
+    btn.addEventListener('click', saveToWatchlist);
+  })
+
+}
 
 // save selected movies to localStorage
-function saveToWatchlist() {
+function saveToWatchlist(e) {
+
+  const filmToSave = e.target.dataset.film; // imdbID as unique data attribute
+
+  // savedFilmObj = { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot }
+
+  console.log('saving to watchlist... ', filmToSave)
+
+
+  let filmsFromStorage = getWatchlistFilms(); // check for watchlisted films
+
+  // filmsFromStorage.push(film); // add film to storage array
+  // localStorage.setItem('films', JSON.stringifyf(filmsFromStorage)); // convert and save to ls
+
 
 }
 
 // pull from localStorage to populate watchlist
-function getWatchlistMovies() {
+function getWatchlistFilms() {
+  let filmsFromStorage; 
+
+  if (!localStorage.getItem('films')) {
+    filmsFromStorage = [];
+  } else {
+    filmsFromStorage = JSON.parse(localStorage.getItem('films'));
+  }
+
+  return filmsFromStorage;
+
+}
+
+// check search results for films already in watchlist
+function checkForWatchlistedResults() {
 
 }
 
