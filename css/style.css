@@ -366,7 +366,7 @@ body {
   background: transparent;
 }
 
-.card-add-btn,
+.card-add-btn i,
 .card-remove-btn i {
   margin-right: 0.5em;
 }

@@ -53,42 +53,74 @@ async function searchByTitle() {
   render(searchResults)
 }
 
+
+
 // Get watchlist content from API 
+// *** Reviewer question - Is this function hacky?
 async function fetchWatchlistContent() {
   const apiKey = '9da4b049'; // move out of the function?
   // get the watchlist from local storage - an array of imdbIDs 
   const watchlist = getWatchlistFromStorage(); 
-
+  console.log('watchlist from storage: ', watchlist)
   // check that watchlist in local storage has a length > 0
   if (watchlist.length > 0) { // or, just watchlist.length? 
     // hide the placeholder content on watchlist.html
-    // const watchlistContent = watchlist.map(async function(film) {
-    //   const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&i=${film}`);
-    //   const data = await res.json();
-    //   return data;
-    // })
-    // console.log('Watchlist content: ', watchlistContent)
 
 
     const watchlistContent = [];
-
     for (film of watchlist) {
-      const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&i=${film}`);
-      const data = await res.json();
-      console.log(data)
+      try {
+        const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&i=${film}`);
+        const data = await res.json();
+        console.log(data)
+        watchlistContent.push(data)
+      } catch(error) {
+        console.error(error)
+        // render and error message to html
+      }
+
     }
+    renderWatchlist(watchlistContent);
 
   } else {
     console.log('No watchlist data')
   }
 
-  
-  // map over local storage watchlist to create a complete film array
-  // - fetch request for each film 
-  // render the watchlist 
-
 }
 
+
+function renderWatchlist(watchlistData) {
+  const watchlistGrid = document.getElementById('watchlist-grid');
+
+  watchlistData.forEach(result => {
+    const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
+
+    // build result card
+    const card = document.createElement('div');
+    card.classList.add('card');
+
+    // ToDo: Handle props with 'N/A' - placeholder div for posters ('poster not available'), etc.
+    // ToDo: Add logic to add minus icon instead of plus if rendering the watchlist
+
+    card.innerHTML = `
+      <a href="https://www.imdb.com/title/${imdbID}" target="_blank"><img src="${Poster}" alt="${Title} poster" class="card-img"></a>
+      <div class="card-content">
+        <div class="card-header">
+          <h3 class="card-title">${Title}</h3>
+          <p class="rating"><i class="fa-solid fa-star"></i><span>${imdbRating}</span></p>
+        </div>
+        <div class="card-meta">
+          <span class="card-runtime">${Runtime}</span>
+          <span class="card-genre">${Genre}</span>
+        </div>
+        <button data-film="${imdbID}" class="btn card-remove-btn"><i class="fa-solid fa-circle-minus"></i> Watchlist</button>
+        <p class="card-body">${Plot}</p>
+      </div>
+      `
+
+    watchlistGrid.appendChild(card)
+  });
+}
 
 
 
@@ -204,30 +236,30 @@ function render(resultsData) { // make this more generic => data, filmData, etc.
 }
 
 
+// Router function
+function init() {
+  switch (document.body.id) {
+    case 'home':
+      // show something else?
+      console.log('home page')
+      break;
+    case 'watchlist':
+      fetchWatchlistContent();
+      console.log('watchlist page')
+      break;
+
+  }
+
+}
+
+init();
+
 
 // *** Previous Code **** //
 // ********************** //
 
 // const searchInput = document.getElementById('search-input');
 // const searchBtn = document.getElementById('search-btn');
-
-
-// searchBtn.addEventListener('click', () => {
-//   searchMovies();
-//   searchInput.value = '';
-// })
-
-// additional fetch request for returned movies, getting movie details by IMDb ID ('i' param)
-// async function getMovieDetails(moviesArray) {
-//   const movieResults = [];
-//   for (let movie of moviesArray) {
-//     const res = await fetch(`http://www.omdbapi.com/?apikey=9da4b049&i=${movie.imdbID}`)
-//     const data = await res.json();
-//     movieResults.push(data)
-//   }
-
-//   refineMovieDetails(movieResults)
-// }
 
 
 
