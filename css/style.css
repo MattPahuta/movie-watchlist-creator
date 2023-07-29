@@ -290,7 +290,7 @@ body {
 .card {
   min-height: 30rem;
   max-width: 18.75rem;
-
+  width: 100%;
   border-bottom: 2px solid var(--clr-silver);
 
   /* border: 3px solid var(--clr-ucla-blue);

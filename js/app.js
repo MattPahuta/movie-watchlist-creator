@@ -4,7 +4,10 @@
   http://www.omdbapi.com/?t=batman
 */
 
-
+const apiKey = '9da4b049'; // move out of the function?
+// initialize watchlist array - local storage or new empty array
+// const localStorageWatchlist = JSON.parse(localStorage.getItem("watchlistArray")) || []
+let localStorageWatchlist = getWatchlistFromStorage();
 
 // global document event listener 
 // ToDo: Make this an init/event function, call on page load? 
@@ -26,7 +29,10 @@ document.addEventListener('click', e => {
   }
 
   if (e.target.classList.contains('card-remove-btn')) {
-    console.log('Removing from watchlist...')
+    const filmToRemove = e.target.dataset.film; // move out of if/else scope?
+    console.log('Removing from watchlist: ', filmToRemove)
+    removeFromWatchlist(filmToRemove); // remove film from ls watchlist
+    fetchWatchlistContent(); // fetch the updated watchlist
   }
 
 
@@ -36,9 +42,6 @@ document.addEventListener('click', e => {
 
 // make request to omdb api for movie titles
 async function searchByTitle() {
-  const apiKey = '9da4b049'; // move out of the function?
-
-  // const searchTerm = searchInput.value;
   const searchTerm = document.getElementById('search-input').value;
   const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&s=${searchTerm}`)
   const data = await res.json();
@@ -53,22 +56,22 @@ async function searchByTitle() {
   render(searchResults)
 }
 
-
-
 // Get watchlist content from API 
 // *** Reviewer question - Is this function hacky?
 async function fetchWatchlistContent() {
-  const apiKey = '9da4b049'; // move out of the function?
+
   // get the watchlist from local storage - an array of imdbIDs 
-  const watchlist = getWatchlistFromStorage(); 
-  console.log('watchlist from storage: ', watchlist)
+  // *** watchlist - localStorageWatchlist
+  // const watchlist = getWatchlistFromStorage(); 
+
+  console.log('watchlist from storage: ', localStorageWatchlist)
   // check that watchlist in local storage has a length > 0
-  if (watchlist.length > 0) { // or, just watchlist.length? 
+  if (localStorageWatchlist.length > 0) { // or, just watchlist.length? 
     // hide the placeholder content on watchlist.html
 
 
-    const watchlistContent = [];
-    for (film of watchlist) {
+    const watchlistContent = []; // holds the complete data for watchlist items
+    for (film of localStorageWatchlist) {
       try {
         const res = await fetch(`http://www.omdbapi.com/?apikey=${apiKey}&i=${film}`);
         const data = await res.json();
@@ -84,14 +87,21 @@ async function fetchWatchlistContent() {
 
   } else {
     console.log('No watchlist data')
+    renderWatchlist([])
   }
 
 }
 
 
-function renderWatchlist(watchlistData) {
+function renderWatchlist(watchlistData) { // watchlistData
   const watchlistGrid = document.getElementById('watchlist-grid');
 
+  // clear previous watchlist content
+  while (watchlistGrid.firstChild) {
+    watchlistGrid.removeChild(watchlistGrid.firstChild);
+  }
+
+  // watchlistData => localStorageWatchlist
   watchlistData.forEach(result => {
     const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
 
@@ -127,23 +137,23 @@ function renderWatchlist(watchlistData) {
 
 // save selected movies to localStorage
 function saveToWatchlist(filmToSave) {
-
   // ToDo:
   //  note: save only imdbID (filmToSave) in local storage
   //  change watchlist card button icon to 'minus' ?
   //  add modal confirming film title saved to watchlist
 
   // let or const?
-  let watchlistFromStorage = getWatchlistFromStorage(); // check for watchlisted films
-  console.log('LS Watchlist: ', watchlistFromStorage); // debug
+  // let watchlistFromStorage = getWatchlistFromStorage(); // check for watchlisted films
+
+  console.log('LS Watchlist: ', localStorageWatchlist); // debug
   // *** ToDo: Make this a ternary statement
-  if (watchlistFromStorage.includes(filmToSave)) { // check if film already in watchlist
+  if (localStorageWatchlist.includes(filmToSave)) { // check if film already in watchlist
     alert('Film is already saved to watchlist');
   } else {   
     console.log('saving to watchlist... ', filmToSave) 
-    watchlistFromStorage.push(filmToSave); // push film (imdbID) to storage array
+    localStorageWatchlist.push(filmToSave); // push film (imdbID) to storage array
     // set local storage array, convert to JSON
-    localStorage.setItem('watchlistFilms', JSON.stringify(watchlistFromStorage));
+    localStorage.setItem('watchlistFilms', JSON.stringify(localStorageWatchlist));
   }
 
 
@@ -164,24 +174,17 @@ function getWatchlistFromStorage() {
 
 }
 
-// check search results for films already in watchlist
-// - possibily use this to apply icons/disable add-to-watchlist buttons
-function checkForWatchlistedResults() {
-
-}
-
 
 
 // remove film from watchlist
 function removeFromWatchlist(filmToRemove) {
   // filmToRemove = imdbID (unique ID saved in watchlist ls array)
-  let watchlistFromStorage = getWatchlistFromStorage();
+  // let watchlistFromStorage = getWatchlistFromStorage();
 
   // filter out the filmToRemove
-  watchlistFromStorage = watchlistFromStorage.filter(film => film !== filmToRemove);
+  const updatedWL = localStorageWatchlist.filter(film => film !== filmToRemove);
   // reset the watchlist in local storage
-  localStorage.setItem('watchlistFilms', JSON.stringify(watchlistFromStorage));
-
+  localStorage.setItem('watchlistFilms', JSON.stringify(updatedWL));
 
 }
 
@@ -196,9 +199,14 @@ function removeFromWatchlist(filmToRemove) {
 
 function render(resultsData) { // make this more generic => data, filmData, etc.
   const resultsGrid = document.getElementById('results-grid');
-  const filmPlaceholder = document.getElementById('film-placeholder');
+  // const filmPlaceholder = document.getElementById('film-placeholder');
+  // filmPlaceholder.style.display = 'none';
 
-  filmPlaceholder.style.display = 'none';
+  // clear results from results grid - placeholder and previous results
+  while (resultsGrid.firstChild) { // clear existing results content with while loop
+    resultsGrid.removeChild(resultsGrid.firstChild);
+  }
+  
 
   // build film cards based on search results received
   console.log('rendering: ', resultsData); // debug
@@ -262,33 +270,57 @@ init();
 // const searchBtn = document.getElementById('search-btn');
 
 
-
 /*
-  searchResults.forEach(result => {
-    const { Poster, Title, imdbRating, Runtime, Genre, Plot } = result;
+// save selected movies to localStorage
+function saveToWatchlist(filmToSave) {
+  // ToDo:
+  //  note: save only imdbID (filmToSave) in local storage
+  //  change watchlist card button icon to 'minus' ?
+  //  add modal confirming film title saved to watchlist
 
-    // build result card
-    const card = document.createElement('div');
-    card.classList.add('card');
-    // build poster image for card
-    const imageEl = document.createElement('img');
-    imageEl.classList.add('card-img');
-    imageEl.src = `${Poster}`;
-    imageEl.alt = `${Title} poster`;
-    card.append(imageEl);
-    // build card content el
-    const cardContent = document.createElement('div');
-    cardContent.classList.add('card-content');
-    // build card header
-    const cardHeader = document.createElement('div');
-    cardHeader.classList.add('card-header');
-    // build card title
-    const cardTitle = document.createElement('h3');
-    cardTitle.classList.add('card-title');
-    // build 
+  // let or const?
+  let watchlistFromStorage = getWatchlistFromStorage(); // check for watchlisted films
+
+  console.log('LS Watchlist: ', watchlistFromStorage); // debug
+  // *** ToDo: Make this a ternary statement
+  if (watchlistFromStorage.includes(filmToSave)) { // check if film already in watchlist
+    alert('Film is already saved to watchlist');
+  } else {   
+    console.log('saving to watchlist... ', filmToSave) 
+    watchlistFromStorage.push(filmToSave); // push film (imdbID) to storage array
+    // set local storage array, convert to JSON
+    localStorage.setItem('watchlistFilms', JSON.stringify(watchlistFromStorage));
+  }
 
 
-  });
+}
+
+// pull from localStorage to populate watchlist
+function getWatchlistFromStorage() {
+  let watchlist; 
+
+  // ToDo: make below a ternary statement
+  if (!localStorage.getItem('watchlistFilms')) { // if there is no watchlist
+    watchlist = []; // set watchlistFromStorage to []
+  } else { // otherwise, get the watchlist from ls
+    watchlist = JSON.parse(localStorage.getItem('watchlistFilms'));
+  }
+
+  return watchlist; // empty array or the array from local storage
+
+}
+
+
+
+// remove film from watchlist
+function removeFromWatchlist(filmToRemove) {
+  // filmToRemove = imdbID (unique ID saved in watchlist ls array)
+  let watchlistFromStorage = getWatchlistFromStorage();
+
+  // filter out the filmToRemove
+  watchlistFromStorage = watchlistFromStorage.filter(film => film !== filmToRemove);
+  // reset the watchlist in local storage
+  localStorage.setItem('watchlistFilms', JSON.stringify(watchlistFromStorage));
 
 }
 */
