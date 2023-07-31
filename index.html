@@ -21,18 +21,23 @@
   </header>
   
   <main>
-    <section class="search-group">
-      <label for="search-input" class="sr-only">Movie Search</label>
-      <input id="search-input" class="search-input" type="text" placeholder="Search for a movie">
-      <button type="submit" id="search-btn" class="btn search-btn">Search</button>
+    <section>
+      <form id="search-form" class="search-group">
+        <label for="search-input" class="sr-only">Movie Search</label>
+        <input id="search-input" class="search-input" type="text" placeholder="Search for a movie">
+        <button type="submit" id="search-btn" class="btn search-btn">Search</button>
+      </form>
     </section>
 
     <section id="results-grid" class="results-grid">
+
 
       <div id="film-placeholder" class="film-placeholder">
         <span class="fa-solid fa-film"></span>
         <span>Start exploring</span>
       </div>
+
+
       
 
       <!-- <div class="card">
@@ -85,6 +90,8 @@
      
 
     </section>
+
+    <div id="loader" class="loader"></div>
   </main>
   
   <footer>
