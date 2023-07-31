@@ -69,7 +69,7 @@ async function searchByTerm(searchTerm) {
   }
 
   console.log('Search Results: ', searchResults)
-  render(searchResults);
+  renderFilmCards(searchResults);
 }
 
 // Save film to local storage watchlist
@@ -99,11 +99,12 @@ function removeFromWatchlist(filmToRemove) {
 
 
 // Render results to the DOM
-// *** Utilize for rendering both search results and watchlist content???
-function render(resultsData) { // make this more generic => data, filmData, etc.
+// watchlist boolean value to determine style of card button to apply
+function renderFilmCards(filmData, watchlist = false) { 
+  console.log(filmData)
   const resultsGrid = document.getElementById('results-grid');
 
-  resultsData.forEach(result => {
+  filmData.forEach(result => {
     const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
 
     // build result card
@@ -111,7 +112,6 @@ function render(resultsData) { // make this more generic => data, filmData, etc.
     card.classList.add('card');
 
     // ToDo: Handle props with 'N/A' - placeholder div for posters ('poster not available'), etc.
-    // ToDo: Add logic to add minus icon instead of plus if rendering the watchlist
 
     card.innerHTML = `
       <a href="https://www.imdb.com/title/${imdbID}" target="_blank"><img src="${Poster}" alt="${Title} poster" class="card-img"></a>
@@ -124,16 +124,21 @@ function render(resultsData) { // make this more generic => data, filmData, etc.
           <span class="card-runtime">${Runtime}</span>
           <span class="card-genre">${Genre}</span>
         </div>
-        <button data-film="${imdbID}" class="btn card-add-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</button>
+        <button data-film="${imdbID}" class="btn ${watchlist ? 'card-remove-btn' : 'card-add-btn'}">
+          <i class="fa-solid ${watchlist ? 'fa-circle-minus' : 'fa-circle-plus'}"></i> Watchlist
+        </button>
         <p class="card-body">${Plot}</p>
       </div>
       `
-
     resultsGrid.appendChild(card)
   });
 
 
 }
+
+/*
+  <button data-film="${imdbID}" class="btn card-add-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</button>
+*/
 
 function clearHtmlResults() {
   const resultsGrid = document.getElementById('results-grid');
@@ -152,7 +157,7 @@ function initializePage() {
       console.log('home page')
       break;
     case 'watchlist':
-      render(localStorageWatchlist);
+      renderFilmCards(localStorageWatchlist, true);
       console.log('watchlist page')
       break;
   }  
