@@ -12,22 +12,30 @@ const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`
 const searchResults = []; // array for detailed result items
 
 // initialize watchlist array - local storage or new empty array
-let localStorageWatchlist = JSON.parse(localStorage.getItem("watchlistFilms")) || []
+let localStorageWatchlist = JSON.parse(localStorage.getItem("myWatchlist")) || []
 
 // Listen for events on search form
 // *** ToDo: Add all listeners to init() function???
-const searchForm = document.getElementById('search-form');
-searchForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const searchInput = document.getElementById('search-input')
-  searchByTerm(searchInput.value);
-  searchInput.value = '';
-})
+
+function initHome() {
+  const searchForm = document.getElementById('search-form');
+  searchForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const searchInput = document.getElementById('search-input')
+
+    searchByTerm(searchInput.value.trim()); // trim input value for uniformity
+
+    searchInput.value = '';
+  });
+}
 
 // Listen for clicks on add/remove from watchlist buttons
 document.addEventListener('click', e => {
+
   const filmTarget = e.target.dataset.film;
+
   if (e.target.classList.contains('card-add-btn')) {
+    console.log('Target film ID: ', filmTarget)
     saveToWatchlist(filmTarget);
 
   }
@@ -40,11 +48,16 @@ document.addEventListener('click', e => {
 
 
 
+
 // Search OMDB by search term
-async function searchByTerm() {
-  clearResults(); // clear previous results
+async function searchByTerm(searchTerm) {
+  clearHtmlResults(); // clear previous html from results grid 
   searchResults.length = 0; // clear previous search results
-  const searchTerm = document.getElementById('search-input').value;
+
+  if (!searchTerm) { // ensure a valid string was passed in
+    console.log('Enter a search!');
+    return;
+  }
   const res = await fetch(`${baseUrl}&s=${searchTerm}`)
   const data = await res.json();
 
@@ -60,8 +73,23 @@ async function searchByTerm() {
 }
 
 // Save film to local storage watchlist
-function saveToWatchlist(filmToSave) {
-  console.log('Saving to local storage: ', filmToSave);
+function saveToWatchlist(filmToSave) { // filmToSave = imdbID
+  // match clicked imdbID with matching film in search results
+  const filmObject = searchResults.filter(film => film.imdbID === filmToSave)[0];
+
+  // check if film is already in the ls watchlist
+  for (let film of localStorageWatchlist) {
+    if (film.imdbID === filmObject.imdbID) {
+      console.log('Aleady added to watchlist!')
+      return;
+    }
+  }
+
+  console.log(filmObject) // debug
+  localStorageWatchlist.push(filmObject); // add film to watchlist
+  localStorage.setItem('myWatchlist', JSON.stringify(localStorageWatchlist)); // set ls watchlist
+
+
 }
 
 // Remove film from local storage watchlist
@@ -107,7 +135,7 @@ function render(resultsData) { // make this more generic => data, filmData, etc.
 
 }
 
-function clearResults() {
+function clearHtmlResults() {
   const resultsGrid = document.getElementById('results-grid');
   // clear results from results grid - placeholder and previous results
   while (resultsGrid.firstChild) { // clear existing results content with while loop
@@ -116,8 +144,21 @@ function clearResults() {
 }
 
 
+// Router function
+function initializePage() {
+  switch (document.body.id) {
+    case 'home':
+      initHome();
+      console.log('home page')
+      break;
+    case 'watchlist':
+      render(localStorageWatchlist);
+      console.log('watchlist page')
+      break;
+  }  
+}
 
-
+initializePage();
 
 function showLoader() {
   document.getElementById('loader').display = 'grid';
