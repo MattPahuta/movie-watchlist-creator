@@ -17,19 +17,27 @@ const searchResults = []; // array for detailed result items
 
 // Listen for events on search form
 // *** ToDo: Add all listeners to init() function???
-
-function initHome() {
-  const searchForm = document.getElementById('search-form');
-  searchForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const searchInput = document.getElementById('search-input')
-    searchByTerm(searchInput.value.trim()); // trim input value for uniformity
-    searchInput.value = '';
-  });
-}
+// *** ToDo: Rename function to initSearchForm
+// function initHome() {
+//   const searchForm = document.getElementById('search-form'); // get the search form element
+//   searchForm.addEventListener('submit', (e) => { // listen for submit events
+//     e.preventDefault(); // prevent default form behavior
+//     const searchInput = document.getElementById('search-input'); // get input element
+//     searchByTerm(searchInput.value.trim()); // get input value and trim for uniformity
+//     searchInput.value = ''; // clear input value
+//   });
+// }
 
 // Listen for clicks on add/remove from watchlist buttons
 document.addEventListener('click', e => {
+
+  if (e.target.id === 'search-btn') {
+    e.preventDefault();
+    const searchInput = document.getElementById('search-input'); // get input element
+    searchByTerm(searchInput.value.trim()); // get input value and trim for uniformity
+    searchInput.value = ''; // clear input value
+  }
+
 
   const filmID = e.target.dataset.film; // unique film ID
 
@@ -43,17 +51,33 @@ document.addEventListener('click', e => {
   }
 })
 
+// initializeListeners();
+
+function initCardBtnListeners() {
+  document.addEventListener('click', e => {
+    const filmID = e.target.dataset.film; // unique film ID
+  
+    if (e.target.classList.contains('card-add-btn')) {
+      saveToWatchlist(filmID); // save film to watchlist
+    }
+  
+    if (e.target.classList.contains('card-remove-btn')) {
+      const filmCard = e.target.closest('.card'); // get button's parent card
+      removeFilm(filmCard, filmID); // remove film from DOM and LS
+    }
+  })
+  
+}
+
 // Get the watchlist from local storage - v 2.0
 function getWatchlistFromStorage() {
-  let watchlistArray;
+  let watchlistArray; // initialize array for the LS watchlist
 
-  // *** ToDo: Try making this a ternary
-  if (!localStorage.getItem('myWatchlist')) {
-    watchlistArray = [];
-  } else {
-    watchlistArray = JSON.parse(localStorage.getItem('myWatchlist'));
-  }
-  return watchlistArray;
+  localStorage.getItem('myWatchlist') // check for a watchlist in LS
+    ? watchlistArray = JSON.parse(localStorage.getItem('myWatchlist'))
+    : watchlistArray = []
+
+  return watchlistArray; // returns LS array or empty array
 }
 
 
@@ -119,7 +143,7 @@ function removeFilmFromStorage(filmID) {
 // Render results to the DOM
 // watchlist boolean value to determine style of card button to apply (add or remove)
 function renderFilmCards(filmData, watchlistPage = false) { 
-  const resultsGrid = document.getElementById('results-grid');
+  const resultsGrid = document.getElementById('results-grid'); // get results grid element
   while (resultsGrid.firstChild) { // clear existing results content with while loop
     resultsGrid.removeChild(resultsGrid.firstChild);
   }  
@@ -131,10 +155,14 @@ function renderFilmCards(filmData, watchlistPage = false) {
     const card = document.createElement('div');
     card.classList.add('card');
 
-    // ToDo: Handle props with 'N/A' - placeholder div for posters ('poster not available'), etc.
+    // *** ToDo: Handle props with 'N/A' - placeholder div for posters ('poster not available'), etc.
+    const noImg = `https://placehold.co/300x444/fec552/1c1c1c?text=No+Image+Available`
+
 
     card.innerHTML = `
-      <a href="https://www.imdb.com/title/${imdbID}" target="_blank"><img src="${Poster}" alt="${Title} poster" class="card-img"></a>
+      <a href="https://www.imdb.com/title/${imdbID}" target="_blank">
+        <img src="${Poster === 'N/A' ? noImg : Poster}" alt="${Title} poster" class="card-img">
+      </a>
       <div class="card-content">
         <div class="card-header">
           <h3 class="card-title">${Title}</h3>
@@ -160,7 +188,8 @@ function renderFilmCards(filmData, watchlistPage = false) {
 function initializePage() {
   switch (document.body.id) {
     case 'home':
-      initHome();
+      // initHome();
+      console.log('Welcome to the Party, pal');
       break;
     case 'watchlist':
       renderFilmCards(getWatchlistFromStorage(), true);
