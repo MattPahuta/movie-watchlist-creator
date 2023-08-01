@@ -92,7 +92,7 @@ function renderWatchlist(watchlistData) { // watchlistData
 }
 
 // Get watchlist content from API 
-// *** Reviewer question - Is this function hacky?
+// *** Reviewer question - Is this function hacky? A more elegant way to do it?
 async function fetchWatchlistContent() {
 
   console.log('watchlist from storage: ', localStorageWatchlist)
@@ -251,19 +251,19 @@ init();
 /*
 
 // pull from localStorage to populate watchlist
-function getWatchlistFromStorage() {
-  let watchlist; 
+// function getWatchlistFromStorage() {
+//   let watchlist; 
 
-  // ToDo: make below a ternary statement
-  if (!localStorage.getItem('watchlistFilms')) { // if there is no watchlist
-    watchlist = []; // set watchlistFromStorage to []
-  } else { // otherwise, get the watchlist from ls
-    watchlist = JSON.parse(localStorage.getItem('watchlistFilms'));
-  }
+//   // ToDo: make below a ternary statement
+//   if (!localStorage.getItem('watchlistFilms')) { // if there is no watchlist
+//     watchlist = []; // set watchlistFromStorage to []
+//   } else { // otherwise, get the watchlist from ls
+//     watchlist = JSON.parse(localStorage.getItem('watchlistFilms'));
+//   }
 
-  return watchlist; // empty array or the array from local storage
+//   return watchlist; // empty array or the array from local storage
 
-}
+// }
 
 // save selected movies to localStorage
 function saveToWatchlist(filmToSave) {

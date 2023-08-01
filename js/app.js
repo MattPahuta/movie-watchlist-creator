@@ -6,13 +6,14 @@
 
 // *** ToDo: create api object with key, url endpoints?
 // const apiKey = '9da4b049';
-const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`
-
+const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`;
 // Current Search Results
 const searchResults = []; // array for detailed result items
 
 // initialize watchlist array - local storage or new empty array
-let localStorageWatchlist = JSON.parse(localStorage.getItem("myWatchlist")) || []
+// v 1.0
+// let localStorageWatchlist = JSON.parse(localStorage.getItem("myWatchlist")) || []; 
+
 
 // Listen for events on search form
 // *** ToDo: Add all listeners to init() function???
@@ -22,9 +23,7 @@ function initHome() {
   searchForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const searchInput = document.getElementById('search-input')
-
     searchByTerm(searchInput.value.trim()); // trim input value for uniformity
-
     searchInput.value = '';
   });
 }
@@ -32,30 +31,38 @@ function initHome() {
 // Listen for clicks on add/remove from watchlist buttons
 document.addEventListener('click', e => {
 
-  const filmTarget = e.target.dataset.film;
+  const filmID = e.target.dataset.film; // unique film ID
 
   if (e.target.classList.contains('card-add-btn')) {
-    console.log('Target film ID: ', filmTarget)
-    saveToWatchlist(filmTarget);
-
+    saveToWatchlist(filmID); // save film to watchlist
   }
 
   if (e.target.classList.contains('card-remove-btn')) {
-    console.log('Removing from watchlist: ', filmTarget)
-    removeFromWatchlist(filmTarget);
+    const filmCard = e.target.closest('.card'); // get button's parent card
+    removeFilm(filmCard, filmID); // remove film from DOM and LS
   }
 })
 
+// Get the watchlist from local storage - v 2.0
+function getWatchlistFromStorage() {
+  let watchlistArray;
 
+  // *** ToDo: Try making this a ternary
+  if (!localStorage.getItem('myWatchlist')) {
+    watchlistArray = [];
+  } else {
+    watchlistArray = JSON.parse(localStorage.getItem('myWatchlist'));
+  }
+  return watchlistArray;
+}
 
 
 // Search OMDB by search term
 async function searchByTerm(searchTerm) {
-  clearHtmlResults(); // clear previous html from results grid 
   searchResults.length = 0; // clear previous search results
 
   if (!searchTerm) { // ensure a valid string was passed in
-    console.log('Enter a search!');
+    alert('Enter a search term!');
     return;
   }
   const res = await fetch(`${baseUrl}&s=${searchTerm}`)
@@ -76,33 +83,46 @@ async function searchByTerm(searchTerm) {
 function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   // match clicked imdbID with matching film in search results
   const filmObject = searchResults.filter(film => film.imdbID === filmToSave)[0];
+  const watchlist = getWatchlistFromStorage(); // get current watchlist from LS
 
   // check if film is already in the ls watchlist
-  for (let film of localStorageWatchlist) {
+  for (let film of watchlist) { // ***ToDo: make this forEach
     if (film.imdbID === filmObject.imdbID) {
       console.log('Aleady added to watchlist!')
       return;
     }
   }
 
-  console.log(filmObject) // debug
-  localStorageWatchlist.push(filmObject); // add film to watchlist
-  localStorage.setItem('myWatchlist', JSON.stringify(localStorageWatchlist)); // set ls watchlist
-
+  watchlist.push(filmObject); // add selected film to watchlist
+  localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // set updated LS watchlist
 
 }
 
-// Remove film from local storage watchlist
-function removeFromWatchlist(filmToRemove) {
-  console.log('Removing from local storage: ', filmToRemove)
+// Remove film from watchlist page
+function removeFilm(filmCard, filmID) {
+  // if (confirm('you sure?')) {
+  //   filmCard.remove();
+  //   removeFilmFromStorage(filmID); 
+  // }
+  // *** ToDo: Add a confirmation modal?
+  filmCard.remove(); // remove film's HTML card from DOM
+  removeFilmFromStorage(filmID); // remove film from LS
 }
 
+// Remove film from local storage
+function removeFilmFromStorage(filmID) {
+  let watchlist = getWatchlistFromStorage(); // get current watchlist from LS
+  watchlist = watchlist.filter(filmObj => filmObj.imdbID !== filmID); // filter out filmID
+  localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // update watchlist in LS
+}
 
 // Render results to the DOM
-// watchlist boolean value to determine style of card button to apply
-function renderFilmCards(filmData, watchlist = false) { 
-  console.log(filmData)
+// watchlist boolean value to determine style of card button to apply (add or remove)
+function renderFilmCards(filmData, watchlistPage = false) { 
   const resultsGrid = document.getElementById('results-grid');
+  while (resultsGrid.firstChild) { // clear existing results content with while loop
+    resultsGrid.removeChild(resultsGrid.firstChild);
+  }  
 
   filmData.forEach(result => {
     const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
@@ -124,8 +144,8 @@ function renderFilmCards(filmData, watchlist = false) {
           <span class="card-runtime">${Runtime}</span>
           <span class="card-genre">${Genre}</span>
         </div>
-        <button data-film="${imdbID}" class="btn ${watchlist ? 'card-remove-btn' : 'card-add-btn'}">
-          <i class="fa-solid ${watchlist ? 'fa-circle-minus' : 'fa-circle-plus'}"></i> Watchlist
+        <button data-film="${imdbID}" class="btn ${watchlistPage ? 'card-remove-btn' : 'card-add-btn'}">
+          <i class="fa-solid ${watchlistPage ? 'fa-circle-minus' : 'fa-circle-plus'}"></i> Watchlist
         </button>
         <p class="card-body">${Plot}</p>
       </div>
@@ -136,29 +156,14 @@ function renderFilmCards(filmData, watchlist = false) {
 
 }
 
-/*
-  <button data-film="${imdbID}" class="btn card-add-btn"><i class="fa-solid fa-circle-plus"></i> Watchlist</button>
-*/
-
-function clearHtmlResults() {
-  const resultsGrid = document.getElementById('results-grid');
-  // clear results from results grid - placeholder and previous results
-  while (resultsGrid.firstChild) { // clear existing results content with while loop
-    resultsGrid.removeChild(resultsGrid.firstChild);
-  }  
-}
-
-
 // Router function
 function initializePage() {
   switch (document.body.id) {
     case 'home':
       initHome();
-      console.log('home page')
       break;
     case 'watchlist':
-      renderFilmCards(localStorageWatchlist, true);
-      console.log('watchlist page')
+      renderFilmCards(getWatchlistFromStorage(), true);
       break;
   }  
 }
