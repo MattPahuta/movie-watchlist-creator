@@ -67,13 +67,33 @@ async function searchByTerm(searchTerm) {
 
   console.log('Search Results: ', searchResults)
   renderFilmCards(searchResults);
+  checkForSavedFilms();
+
 }
 
-function checkForSavedFilm() {
+function checkForSavedFilms() {
   // compare search results array to the local storage array
   //  - compare .imdbID props
   // if a match, update button color and fa icon (check)
+  const watchlist = getWatchlistFromStorage();
+
+  const savedBtnHtml = `
+    <button class="btn card-saved-btn">
+      <i class="fa-solid fa-circle-check"></i> Film Saved
+    </button>`
+
+  for (let film of searchResults) {
+    for (let savedFilm of watchlist) {
+      if (film.imdbID === savedFilm.imdbID) {
+        console.log('found film(s) in watchlist: ', savedFilm)
+        // let btnDiv = document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`);
+        // btnDiv.innerHTML = savedBtnHtml;
+        document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`).innerHTML = savedBtnHtml;
+      }
+    }
+  }
 }
+
 
 // Save film to local storage watchlist
 function saveToWatchlist(filmToSave) { // filmToSave = imdbID
@@ -84,14 +104,14 @@ function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   // check if film is already in the ls watchlist
   for (let film of watchlist) { 
     if (film.imdbID === filmObject.imdbID) {
-      alert('Aleady added to watchlist!');
+      alert('Film aleady added to watchlist!');
       return;
     }
   }
 
   watchlist.push(filmObject); // add selected film to watchlist
   localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // set updated LS watchlist
-
+  checkForSavedFilms();
 }
 
 // Remove film from watchlist page
@@ -100,9 +120,7 @@ function removeFilm(filmCard, filmID) {
     filmCard.remove(); // remove film card html from DOM
     removeFilmFromStorage(filmID); // remove film from LS
   }
-  // *** ToDo: Add a confirmation modal?
-  // filmCard.remove(); 
-  // removeFilmFromStorage(filmID); 
+  // *** ToDo: Add a confirmation modal to replace confirm?
 }
 
 // Remove film from local storage
@@ -111,20 +129,6 @@ function removeFilmFromStorage(filmID) {
   watchlist = watchlist.filter(filmObj => filmObj.imdbID !== filmID); // filter out filmID
   localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // update watchlist in LS
 }
-
-// Apply proper film card button
-function getFilmCardBtnHtml(imdbID, btnType) {
-  // add, saved, remove;
-
-
-  // added to watchlist btn
-  const savedCardBtn = `
-  <button data-film="${imdbID}" class="btn card-saved-btn">
-    <i class="fa-solid fa-circle-check"></i> Saved
-  </button>`
-
-}
-
 
 // Render results to the DOM
 // watchlist boolean value to determine style of card button to apply (add or remove)
@@ -144,14 +148,14 @@ function renderFilmCards(filmData, watchlistPage = false) {
     const noImg = `https://placehold.co/300x444/fec552/1c1c1c?text=No+Image+Available`;
 
     const addBtnHtml = `        
-      <button data-film="${imdbID}" class="btn card-add-btn">
-        <i class="fa-solid fa-circle-plus"></i> Watchlist
-      </button>`
+    <button data-film="${imdbID}" class="btn card-add-btn">
+      <i class="fa-solid fa-circle-plus"></i> Watchlist
+    </button>`
 
     const removeBtnHtml = `        
-      <button data-film="${imdbID}" class="btn card-remove-btn">
-        <i class="fa-solid fa-circle-minus"></i> Remove
-      </button>`
+    <button data-film="${imdbID}" class="btn card-remove-btn">
+      <i class="fa-solid fa-circle-minus"></i> Remove
+    </button>`
 
     card.innerHTML = `
       <a href="https://www.imdb.com/title/${imdbID}" target="_blank">
@@ -166,13 +170,17 @@ function renderFilmCards(filmData, watchlistPage = false) {
           <span class="card-runtime">${Runtime}</span>
           <span class="card-genre">${Genre}</span>
         </div>
-        ${watchlistPage ? removeBtnHtml : addBtnHtml}
+
+          <div class="btn-container" data-btn-container="${imdbID}">
+          ${watchlistPage ? removeBtnHtml : addBtnHtml}
+          </div>
+
+
         <p class="card-body">${Plot}</p>
       </div>
       `
     resultsGrid.appendChild(card)
   });
-
 
 }
 
@@ -223,4 +231,34 @@ function hideLoader() {
         <button data-film="${imdbID}" class="btn ${watchlistPage ? 'card-remove-btn' : 'card-add-btn'}">
           <i class="fa-solid ${watchlistPage ? 'fa-circle-minus' : 'fa-circle-plus'}"></i> Watchlist
         </button>
+
+
+        // Apply proper film card button
+function getFilmCardBtnHtml(imdbID, btnType) {
+  // add, saved, remove;
+  function getTheButton() {
+
+    const savedBtnHtml = `        
+    <button data-film="${imdbID}" class="btn card-saved-btn">
+      <i class="fa-solid fa-circle-check"></i> Saved
+    </button>`
+
+    if (checkForSavedFilm()) {
+      return savedBtnHtml;
+    } else if (!watchlistPage && !checkForSavedFilm()) {
+      return addBtnHtml;
+    } else {
+      return removeBtnHtml;
+    }
+
+  }
+
+
+  // added to watchlist btn
+  const savedCardBtn = `
+  <button data-film="${imdbID}" class="btn card-saved-btn">
+    <i class="fa-solid fa-circle-check"></i> Saved
+  </button>`
+
+}
 */

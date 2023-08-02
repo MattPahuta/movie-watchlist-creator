@@ -17,7 +17,7 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
   --clr-ucla-blue: hsla(205, 38%, 40%, 1);
   --clr-powder-blue: hsla(211, 31%, 66%, 1);
   --clr-mint-green: hsla(166, 73%, 88%, 1);
-
+  --clr-sea-green: hsl(156, 86%, 28%);
   --clr-rating-yellow: hsla(40, 99%, 66%, 1);
 
 
@@ -292,24 +292,14 @@ body {
   max-width: 18.75rem;
   width: 100%;
   border-bottom: 2px solid var(--clr-silver);
-
-  /* border: 3px solid var(--clr-ucla-blue);
-  border-radius: 10px; */
-  /* display: flex;
-  flex-direction: column; */
 }
-
-
 
 .card-img {
   width: 100%;
   max-width: 300px;
   object-fit: cover;
   border-radius: 10px;
-
   background-color: var(--clr-rating-yellow);
-  /* border-top-left-radius: 10px;
-  border-top-right-radius: 10px; */
 }
 
 .card-img:hover {
@@ -331,7 +321,6 @@ body {
 .card-meta {
   display: flex;
   align-items: center;
-
 }
 
 .card-header {
@@ -368,6 +357,10 @@ body {
   background: transparent;
 }
 
+.card-saved-btn {
+  color: var(--clr-sea-green);
+}
+
 .card-add-btn i,
 .card-saved-btn i,
 .card-remove-btn i {
@@ -380,6 +373,10 @@ body {
 
 .card-remove-btn:hover {
   color: var(--clr-rating-yellow);
+}
+
+.card-saved-btn:hover {
+  cursor: default;
 }
 
 .card-body {
