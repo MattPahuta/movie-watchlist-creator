@@ -10,34 +10,15 @@ const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`;
 // Current Search Results
 const searchResults = []; // array for detailed result items
 
-// initialize watchlist array - local storage or new empty array
-// v 1.0
-// let localStorageWatchlist = JSON.parse(localStorage.getItem("myWatchlist")) || []; 
-
-
-// Listen for events on search form
-// *** ToDo: Add all listeners to init() function???
-// *** ToDo: Rename function to initSearchForm
-// function initHome() {
-//   const searchForm = document.getElementById('search-form'); // get the search form element
-//   searchForm.addEventListener('submit', (e) => { // listen for submit events
-//     e.preventDefault(); // prevent default form behavior
-//     const searchInput = document.getElementById('search-input'); // get input element
-//     searchByTerm(searchInput.value.trim()); // get input value and trim for uniformity
-//     searchInput.value = ''; // clear input value
-//   });
-// }
-
-// Listen for clicks on add/remove from watchlist buttons
+// Listen for events on search form and film card buttons
 document.addEventListener('click', e => {
 
   if (e.target.id === 'search-btn') {
-    e.preventDefault();
+    e.preventDefault(); // prevent default film behavior
     const searchInput = document.getElementById('search-input'); // get input element
     searchByTerm(searchInput.value.trim()); // get input value and trim for uniformity
     searchInput.value = ''; // clear input value
   }
-
 
   const filmID = e.target.dataset.film; // unique film ID
 
@@ -51,23 +32,8 @@ document.addEventListener('click', e => {
   }
 })
 
-// initializeListeners();
 
-function initCardBtnListeners() {
-  document.addEventListener('click', e => {
-    const filmID = e.target.dataset.film; // unique film ID
-  
-    if (e.target.classList.contains('card-add-btn')) {
-      saveToWatchlist(filmID); // save film to watchlist
-    }
-  
-    if (e.target.classList.contains('card-remove-btn')) {
-      const filmCard = e.target.closest('.card'); // get button's parent card
-      removeFilm(filmCard, filmID); // remove film from DOM and LS
-    }
-  })
-  
-}
+
 
 // Get the watchlist from local storage - v 2.0
 function getWatchlistFromStorage() {
@@ -103,6 +69,12 @@ async function searchByTerm(searchTerm) {
   renderFilmCards(searchResults);
 }
 
+function checkForSavedFilm() {
+  // compare search results array to the local storage array
+  //  - compare .imdbID props
+  // if a match, update button color and fa icon (check)
+}
+
 // Save film to local storage watchlist
 function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   // match clicked imdbID with matching film in search results
@@ -110,9 +82,9 @@ function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   const watchlist = getWatchlistFromStorage(); // get current watchlist from LS
 
   // check if film is already in the ls watchlist
-  for (let film of watchlist) { // ***ToDo: make this forEach
+  for (let film of watchlist) { 
     if (film.imdbID === filmObject.imdbID) {
-      console.log('Aleady added to watchlist!')
+      alert('Aleady added to watchlist!');
       return;
     }
   }
@@ -124,13 +96,13 @@ function saveToWatchlist(filmToSave) { // filmToSave = imdbID
 
 // Remove film from watchlist page
 function removeFilm(filmCard, filmID) {
-  // if (confirm('you sure?')) {
-  //   filmCard.remove();
-  //   removeFilmFromStorage(filmID); 
-  // }
+  if (confirm('Are you sure you want to remove this film?')) {
+    filmCard.remove(); // remove film card html from DOM
+    removeFilmFromStorage(filmID); // remove film from LS
+  }
   // *** ToDo: Add a confirmation modal?
-  filmCard.remove(); // remove film's HTML card from DOM
-  removeFilmFromStorage(filmID); // remove film from LS
+  // filmCard.remove(); 
+  // removeFilmFromStorage(filmID); 
 }
 
 // Remove film from local storage
@@ -139,6 +111,20 @@ function removeFilmFromStorage(filmID) {
   watchlist = watchlist.filter(filmObj => filmObj.imdbID !== filmID); // filter out filmID
   localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // update watchlist in LS
 }
+
+// Apply proper film card button
+function getFilmCardBtnHtml(imdbID, btnType) {
+  // add, saved, remove;
+
+
+  // added to watchlist btn
+  const savedCardBtn = `
+  <button data-film="${imdbID}" class="btn card-saved-btn">
+    <i class="fa-solid fa-circle-check"></i> Saved
+  </button>`
+
+}
+
 
 // Render results to the DOM
 // watchlist boolean value to determine style of card button to apply (add or remove)
@@ -154,10 +140,18 @@ function renderFilmCards(filmData, watchlistPage = false) {
     // build result card
     const card = document.createElement('div');
     card.classList.add('card');
+    // placeholder for films without images
+    const noImg = `https://placehold.co/300x444/fec552/1c1c1c?text=No+Image+Available`;
 
-    // *** ToDo: Handle props with 'N/A' - placeholder div for posters ('poster not available'), etc.
-    const noImg = `https://placehold.co/300x444/fec552/1c1c1c?text=No+Image+Available`
+    const addBtnHtml = `        
+      <button data-film="${imdbID}" class="btn card-add-btn">
+        <i class="fa-solid fa-circle-plus"></i> Watchlist
+      </button>`
 
+    const removeBtnHtml = `        
+      <button data-film="${imdbID}" class="btn card-remove-btn">
+        <i class="fa-solid fa-circle-minus"></i> Remove
+      </button>`
 
     card.innerHTML = `
       <a href="https://www.imdb.com/title/${imdbID}" target="_blank">
@@ -172,9 +166,7 @@ function renderFilmCards(filmData, watchlistPage = false) {
           <span class="card-runtime">${Runtime}</span>
           <span class="card-genre">${Genre}</span>
         </div>
-        <button data-film="${imdbID}" class="btn ${watchlistPage ? 'card-remove-btn' : 'card-add-btn'}">
-          <i class="fa-solid ${watchlistPage ? 'fa-circle-minus' : 'fa-circle-plus'}"></i> Watchlist
-        </button>
+        ${watchlistPage ? removeBtnHtml : addBtnHtml}
         <p class="card-body">${Plot}</p>
       </div>
       `
@@ -183,6 +175,7 @@ function renderFilmCards(filmData, watchlistPage = false) {
 
 
 }
+
 
 // Router function
 function initializePage() {
@@ -199,10 +192,35 @@ function initializePage() {
 
 initializePage();
 
+const loader = document.getElementById('loader');
+
 function showLoader() {
-  document.getElementById('loader').display = 'grid';
+  loader.style.display = 'grid';
 }
 
 function hideLoader() {
-  document.getElementById('loader').display = 'none';
+  loader.style.display = 'none';
 }
+
+
+// function initCardBtnListeners() {
+//   document.addEventListener('click', e => {
+//     const filmID = e.target.dataset.film; // unique film ID
+  
+//     if (e.target.classList.contains('card-add-btn')) {
+//       saveToWatchlist(filmID); // save film to watchlist
+//     }
+  
+//     if (e.target.classList.contains('card-remove-btn')) {
+//       const filmCard = e.target.closest('.card'); // get button's parent card
+//       removeFilm(filmCard, filmID); // remove film from DOM and LS
+//     }
+//   })
+  
+// }
+
+/*
+        <button data-film="${imdbID}" class="btn ${watchlistPage ? 'card-remove-btn' : 'card-add-btn'}">
+          <i class="fa-solid ${watchlistPage ? 'fa-circle-minus' : 'fa-circle-plus'}"></i> Watchlist
+        </button>
+*/

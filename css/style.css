@@ -358,6 +358,7 @@ body {
 }
 
 .card-add-btn,
+.card-saved-btn,
 .card-remove-btn {
   min-width: 10ch;
   border-radius: 8px;
@@ -368,6 +369,7 @@ body {
 }
 
 .card-add-btn i,
+.card-saved-btn i,
 .card-remove-btn i {
   margin-right: 0.5em;
 }
@@ -428,6 +430,7 @@ body {
   }
 
   .card-add-btn,
+  .card-saved-btn,
   .card-remove-btn {
     font-size: var(--fs-500);
   }
@@ -443,13 +446,13 @@ body {
   width: 150px; /* control the size */
   aspect-ratio: 1;
   display: none;
-  /* -webkit-mask: conic-gradient(from 22deg, #0003,#000);
-          mask: conic-gradient(from 22deg, #0003,#000); */
+  -webkit-mask: conic-gradient(from 22deg, #0003,#000);
+          mask: conic-gradient(from 22deg, #0003,#000);
   animation: load 1s steps(8) infinite;
 }
 .loader,
 .loader:before {
-  --_g: linear-gradient(#17177c 0 0) 50%; /* update the color here */
+  --_g: linear-gradient(#b2b2e6 0 0) 50%; /* update the color here */
   background: 
     var(--_g)/34% 8%  space no-repeat,
     var(--_g)/8%  34% no-repeat space;
