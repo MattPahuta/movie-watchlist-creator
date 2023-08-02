@@ -1,14 +1,10 @@
-// api key: 9da4b049
 /* OMDb API: http://www.omdbapi.com/?i=tt3896198&apikey=9da4b049
   http://www.omdbapi.com/?apikey=[yourkey]&
   http://www.omdbapi.com/?t=batman
 */
 
-// *** ToDo: create api object with key, url endpoints?
-// const apiKey = '9da4b049';
 const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`;
-// Current Search Results
-const searchResults = []; // array for detailed result items
+const searchResults = []; // Current search results
 
 // Listen for events on search form and film card buttons
 document.addEventListener('click', e => {
@@ -31,9 +27,6 @@ document.addEventListener('click', e => {
     removeFilm(filmCard, filmID); // remove film from DOM and LS
   }
 })
-
-
-
 
 // Get the watchlist from local storage - v 2.0
 function getWatchlistFromStorage() {
@@ -77,6 +70,7 @@ function checkForSavedFilms() {
   // if a match, update button color and fa icon (check)
   const watchlist = getWatchlistFromStorage();
 
+  // ***ToDo: remove button, make this just a <div>, <p>
   const savedBtnHtml = `
     <button class="btn card-saved-btn">
       <i class="fa-solid fa-circle-check"></i> Film Saved
@@ -120,7 +114,7 @@ function removeFilm(filmCard, filmID) {
     filmCard.remove(); // remove film card html from DOM
     removeFilmFromStorage(filmID); // remove film from LS
   }
-  // *** ToDo: Add a confirmation modal to replace confirm?
+  // *** Future enhancement: Add a confirmation modal to replace confirm dialog
 }
 
 // Remove film from local storage
@@ -170,12 +164,9 @@ function renderFilmCards(filmData, watchlistPage = false) {
           <span class="card-runtime">${Runtime}</span>
           <span class="card-genre">${Genre}</span>
         </div>
-
           <div class="btn-container" data-btn-container="${imdbID}">
           ${watchlistPage ? removeBtnHtml : addBtnHtml}
           </div>
-
-
         <p class="card-body">${Plot}</p>
       </div>
       `
@@ -183,7 +174,6 @@ function renderFilmCards(filmData, watchlistPage = false) {
   });
 
 }
-
 
 // Router function
 function initializePage() {
@@ -200,6 +190,7 @@ function initializePage() {
 
 initializePage();
 
+// Loader animation code
 const loader = document.getElementById('loader');
 
 function showLoader() {
