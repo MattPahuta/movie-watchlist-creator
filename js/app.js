@@ -51,6 +51,8 @@ async function searchByTerm(searchTerm) {
   const res = await fetch(`${baseUrl}&s=${searchTerm}`)
   const data = await res.json();
 
+  // *** ToDo: Add error handling/messaging for searches with no results
+
   // get detailed results for each result
   for (let film of data.Search) {
     const res = await fetch(`${baseUrl}&i=${film.imdbID}`); // fetch detailed info for each ID
@@ -180,11 +182,14 @@ function initializePage() {
   switch (document.body.id) {
     case 'home':
       // initHome();
+      // add watchlist length to watchlist nav?
       console.log('Welcome to the Party, pal');
       break;
     case 'watchlist':
-      renderFilmCards(getWatchlistFromStorage(), true);
-      break;
+      if (getWatchlistFromStorage().length) {
+        renderFilmCards(getWatchlistFromStorage(), true);
+        break;
+      }
   }  
 }
 

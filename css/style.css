@@ -11,7 +11,7 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
 /* Custom Variables */
 /* **************** */
 :root {
-  /* colors */
+  /* primary colors */
   --clr-raisin-black: hsla(228, 25%, 12%, 1);
   --clr-delft-blue: hsla(216, 44%, 25%, 1);
   --clr-ucla-blue: hsla(205, 38%, 40%, 1);
@@ -20,8 +20,7 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
   --clr-sea-green: hsl(156, 86%, 28%);
   --clr-rating-yellow: hsla(40, 99%, 66%, 1);
 
-
-  /* neutrals */
+  /* default neutral colors */
   --clr-pure-white: hsl(0, 0%, 100%);
   --clr-ghost-white: hsl(252, 19%, 95%);
   --clr-silver: hsl(132, 4%, 76%);
@@ -162,14 +161,22 @@ body {
   }
 }
 
-.watchlist-title a {
+.nav-link {
   color: var(--clr-silver);
   text-decoration: none;
   transition: 200ms all ease-in-out;
 }
 
-.watchlist-title a:hover {
+.nav-link:hover {
   color: var(--clr-mint-green);
+}
+
+.watchlist-placeholder a {
+  font-size: var(--fs-550);
+}
+
+.watchlist-placeholder i {
+  margin-right: 0.5rem;;
 }
 
 /* Search Form Styles */
@@ -255,7 +262,8 @@ body {
 
 
 /* Search results styles - movie cards */
-.film-placeholder {
+.film-placeholder,
+.watchlist-placeholder {
   color: #DFDDDD;
   display: flex;
   flex-direction: column;
@@ -265,6 +273,12 @@ body {
   font-size: 2rem;
   margin-top: 150px;
 }
+
+.watchlist-placeholder a {
+  /* text-decoration: none; */
+  /* color: var(--clr-ghost-white); */
+}
+
 
 .fa-film {
   font-size: 5rem;

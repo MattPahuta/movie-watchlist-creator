@@ -16,7 +16,7 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 
 ## Overview
 
-### Project Requirements 
+### Project requirements 
 
 - Develop a two page website: index.html and watchlist.html
 - Design site according to supplied figma design comp
@@ -28,7 +28,7 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 
 ### Additional enhancements
 
-- Result film images link to film's external IMDB page
+- Film result images link to the film's external IMDB page
 - Search result items already saved to watchlist are identified as such
 - Additional design customizations and enhancements
 
