@@ -48,21 +48,22 @@ async function searchByTerm(searchTerm) {
     alert('Enter a search term!');
     return;
   }
-  const res = await fetch(`${baseUrl}&s=${searchTerm}`)
-  const data = await res.json();
-
-  // *** ToDo: Add error handling/messaging for searches with no results
-
-  // get detailed results for each result
-  for (let film of data.Search) {
-    const res = await fetch(`${baseUrl}&i=${film.imdbID}`); // fetch detailed info for each ID
+  try {
+    const res = await fetch(`${baseUrl}&s=${searchTerm}`)
     const data = await res.json();
-    searchResults.push(data)
+    // get detailed results for each result
+    for (let film of data.Search) {
+      const res = await fetch(`${baseUrl}&i=${film.imdbID}`); // fetch detailed info for each ID
+      const data = await res.json();
+      searchResults.push(data)
+    }
+    console.log('Search Results: ', searchResults); // debug
+    renderFilmCards(searchResults);
+    checkForSavedFilms();
+  } catch(err) {
+    document.getElementById('error-dialog').style.display = 'block';
+    console.error(err); // debug
   }
-
-  console.log('Search Results: ', searchResults)
-  renderFilmCards(searchResults);
-  checkForSavedFilms();
 
 }
 

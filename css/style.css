@@ -179,6 +179,12 @@ body {
   margin-right: 0.5rem;;
 }
 
+.error-dialog {
+  display: none;
+  color: var(--clr-rating-yellow);
+  font-size: var(--fs-550);
+}
+
 /* Search Form Styles */
 .search-group {
   margin-top: -33px;
