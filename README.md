@@ -29,12 +29,13 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 ### Additional enhancements
 
 - Film result images link to the film's external IMDB page
-- Search result items already saved to watchlist are identified as such
+- Search result items already saved to watchlist are identified
+- Number of watchlist items saved displayed on home page
 - Additional design customizations and enhancements
 
 ### Screenshot
 
-![]()
+![](./images/project-ss.jpg)
 
 
 ### Links
@@ -54,15 +55,24 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 
 ### What I learned
 
-In addition to a collection...
+Nested loops have been something I've often tried to avoid. However, this particular implementation seemed like the most straightforward approach for the function I'm using to check if a search result item is already saved to the local storage watchlist.
 
 ```js
-function filterEmployeesByName(e) {
-  const inputText = e.target.value.toLowerCase().trim(); // normalize text input with toLowerCase and trim 
-  const filteredEmployees = employees.filter(employee =>  // filter directory based on inputText
-    employee.name.toLowerCase().includes(inputText)); // return results
-  resetTeamSelect(); // reset the team select field for clarity
-  render(filteredEmployees); // render the filtered employees
+function checkForSavedFilms() {
+  const watchlist = getWatchlistFromStorage();
+
+  const savedTagHtml = `
+    <p class="saved-film">
+      <i class="fa-solid fa-circle-check"></i> Film Saved
+    </p>`
+  // loop over searchResults to match films saved in watchlist
+  for (let film of searchResults) {
+    for (let savedFilm of watchlist) { // loop over watchlist for each film
+      if (film.imdbID === savedFilm.imdbID) { // compare imdbID
+        document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`).innerHTML = savedTagHtml;
+      }
+    }
+  }
 }
 ```
 

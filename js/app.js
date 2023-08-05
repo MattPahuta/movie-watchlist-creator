@@ -7,7 +7,6 @@ const searchResults = []; // Current search results
 const resultsGrid = document.getElementById('results-grid');
 const loader = document.getElementById('loader');
 
-
 // Listen for events on search form and film card buttons
 document.addEventListener('click', e => {
   // search listener
