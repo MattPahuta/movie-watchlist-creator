@@ -2,14 +2,15 @@
   http://www.omdbapi.com/?apikey=[yourkey]&
   http://www.omdbapi.com/?t=batman
 */
-
 const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`;
 const searchResults = []; // Current search results
 const resultsGrid = document.getElementById('results-grid');
+const loader = document.getElementById('loader');
+
 
 // Listen for events on search form and film card buttons
 document.addEventListener('click', e => {
-
+  // search listener
   if (e.target.id === 'search-btn') {
     e.preventDefault(); // prevent default film behavior
     const searchInput = document.getElementById('search-input'); // get input element
@@ -18,11 +19,11 @@ document.addEventListener('click', e => {
   }
 
   const filmID = e.target.dataset.film; // unique film ID
-
+  // add film to watchlist listener
   if (e.target.classList.contains('card-add-btn')) {
     saveToWatchlist(filmID); // save film to watchlist
   }
-
+  // remove film from watchlist listener
   if (e.target.classList.contains('card-remove-btn')) {
     const filmCard = e.target.closest('.card'); // get button's parent card
     removeFilm(filmCard, filmID); // remove film from DOM and LS
@@ -57,24 +58,31 @@ async function searchByTerm(searchTerm) {
   }
   try {
     clearResultsGrid();
-    showLoader()
+    errorToggle();
+    showLoader();
     const res = await fetch(`${baseUrl}&s=${searchTerm}`)
     const data = await res.json();
     // get detailed results for each result
     for (let film of data.Search) {
       const res = await fetch(`${baseUrl}&i=${film.imdbID}`); // fetch detailed info for each ID
       const data = await res.json();
-      searchResults.push(data)
+      searchResults.push(data);
     }
     console.log('Search Results: ', searchResults); // debug
     renderFilmCards(searchResults);
     checkForSavedFilms();
-    hideLoader()
+    hideLoader();
   } catch(err) {
-    document.getElementById('error-dialog').style.display = 'block';
+    hideLoader();
+    errorToggle(err);
     console.error(err); // debug
   }
 
+}
+
+function errorToggle(err = false) {
+  const errorDialog = document.getElementById('error-dialog');
+  err ? errorDialog.style.display = 'block' : errorDialog.style.display = 'none';
 }
 
 function checkForSavedFilms() {
@@ -113,13 +121,15 @@ function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   checkForSavedFilms();
 }
 
+function getWatchListLength() {
+  const watchlist = getWatchlistFromStorage();
+  return watchlist.length;
+}
+
 // Remove film from watchlist page
 function removeFilm(filmCard, filmID) {
-  if (confirm('Are you sure you want to remove this film?')) {
-    filmCard.remove(); // remove film card html from DOM
-    removeFilmFromStorage(filmID); // remove film from LS
-  }
-  // *** Future enhancement: Add a confirmation modal to replace confirm dialog
+  filmCard.remove(); // remove film card html from DOM
+  removeFilmFromStorage(filmID); // remove film from LS
 }
 
 // Remove film from local storage
@@ -133,7 +143,7 @@ function removeFilmFromStorage(filmID) {
 // watchlist boolean value to determine style of card button to apply (add or remove)
 function renderFilmCards(filmData, watchlistPage = false) { 
 
-  clearResultsGrid();
+  clearResultsGrid(); // clear any previous results
 
   filmData.forEach(result => {
     const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
@@ -176,6 +186,7 @@ function renderFilmCards(filmData, watchlistPage = false) {
     resultsGrid.appendChild(card)
   });
 
+
 }
 
 // Router function
@@ -194,11 +205,6 @@ function initializePage() {
   }  
 }
 
-initializePage();
-
-// Loader animation code
-const loader = document.getElementById('loader');
-
 function showLoader() {
   loader.style.display = 'grid';
 }
@@ -207,55 +213,4 @@ function hideLoader() {
   loader.style.display = 'none';
 }
 
-
-// function initCardBtnListeners() {
-//   document.addEventListener('click', e => {
-//     const filmID = e.target.dataset.film; // unique film ID
-  
-//     if (e.target.classList.contains('card-add-btn')) {
-//       saveToWatchlist(filmID); // save film to watchlist
-//     }
-  
-//     if (e.target.classList.contains('card-remove-btn')) {
-//       const filmCard = e.target.closest('.card'); // get button's parent card
-//       removeFilm(filmCard, filmID); // remove film from DOM and LS
-//     }
-//   })
-  
-// }
-
-/*
-        <button data-film="${imdbID}" class="btn ${watchlistPage ? 'card-remove-btn' : 'card-add-btn'}">
-          <i class="fa-solid ${watchlistPage ? 'fa-circle-minus' : 'fa-circle-plus'}"></i> Watchlist
-        </button>
-
-
-        // Apply proper film card button
-function getFilmCardBtnHtml(imdbID, btnType) {
-  // add, saved, remove;
-  function getTheButton() {
-
-    const savedBtnHtml = `        
-    <button data-film="${imdbID}" class="btn card-saved-btn">
-      <i class="fa-solid fa-circle-check"></i> Saved
-    </button>`
-
-    if (checkForSavedFilm()) {
-      return savedBtnHtml;
-    } else if (!watchlistPage && !checkForSavedFilm()) {
-      return addBtnHtml;
-    } else {
-      return removeBtnHtml;
-    }
-
-  }
-
-
-  // added to watchlist btn
-  const savedCardBtn = `
-  <button data-film="${imdbID}" class="btn card-saved-btn">
-    <i class="fa-solid fa-circle-check"></i> Saved
-  </button>`
-
-}
-*/
+initializePage();

@@ -17,6 +17,7 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
   --clr-powder-blue: hsla(211, 31%, 66%, 1);
   --clr-sea-green: hsl(156, 86%, 28%);
   --clr-rating-yellow: hsla(40, 99%, 66%, 1);
+  --clr-rating-yellow2: #fec552;
 
   /* default neutral colors */
   --clr-white: hsl(0, 0%, 100%); 
@@ -43,6 +44,8 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
     --fs-600: 2rem;
     --fs-550: 1.75rem;
     --fs-500: 1.25rem;
+    --fs-400: 1.125rem;
+    --fs-300: 0.975rem;
   }
 }
 
@@ -188,6 +191,7 @@ body {
   display: none;
   color: var(--clr-rating-yellow);
   font-size: var(--fs-550);
+  text-align: center;
 }
 
 /* Search Form Styles */
@@ -295,6 +299,7 @@ body {
   width: 100%;
   border-bottom: 2px solid var(--clr-silver);
 }
+
 
 .card-img {
   width: 100%;
@@ -423,23 +428,18 @@ body {
     font-size: var(--fs-550);
   }
 
-  .card-meta {
-    margin-bottom: 1.125rem;
-    font-size: var(--fs-400);
-  }
-
   .card-add-btn,
   .card-saved-btn,
   .card-remove-btn {
     font-size: var(--fs-500);
   }
 
-  .card-body {
-    font-size: var(--fs-500);
-  }
 }
 
-
+/*
+  Loader courtesy of Temani Afif
+  https://codepen.io/t_afif/pen/rNpbMvM
+*/
 /* Loading Animation */
 .loader {
   margin-inline: auto;
@@ -452,7 +452,7 @@ body {
 }
 .loader,
 .loader:before {
-  --_g: linear-gradient(#b2b2e6 0 0) 50%; /* update the color here */
+  --_g: linear-gradient(#b2b2e6 0 0) 50%;
   background: 
     var(--_g)/34% 8%  space no-repeat,
     var(--_g)/8%  34% no-repeat space;
@@ -465,11 +465,3 @@ body {
   from {transform: rotate(0turn)}
   to   {transform: rotate(1turn)}
 }
-
-
-/* body {
-  margin:0;
-  min-height:100vh;
-  display:grid;
-  place-content:center;
-} */
