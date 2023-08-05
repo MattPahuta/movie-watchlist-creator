@@ -5,6 +5,7 @@
 
 const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`;
 const searchResults = []; // Current search results
+const resultsGrid = document.getElementById('results-grid');
 
 // Listen for events on search form and film card buttons
 document.addEventListener('click', e => {
@@ -28,7 +29,7 @@ document.addEventListener('click', e => {
   }
 })
 
-// Get the watchlist from local storage - v 2.0
+// Get the watchlist from local storage
 function getWatchlistFromStorage() {
   let watchlistArray; // initialize array for the LS watchlist
 
@@ -39,6 +40,12 @@ function getWatchlistFromStorage() {
   return watchlistArray; // returns LS array or empty array
 }
 
+// clear all children from results grid - search and watchlist pages
+function clearResultsGrid() {
+  while (resultsGrid.firstChild) { // clear existing results content with while loop
+    resultsGrid.removeChild(resultsGrid.firstChild);
+  } 
+}
 
 // Search OMDB by search term
 async function searchByTerm(searchTerm) {
@@ -49,6 +56,8 @@ async function searchByTerm(searchTerm) {
     return;
   }
   try {
+    clearResultsGrid();
+    showLoader()
     const res = await fetch(`${baseUrl}&s=${searchTerm}`)
     const data = await res.json();
     // get detailed results for each result
@@ -60,6 +69,7 @@ async function searchByTerm(searchTerm) {
     console.log('Search Results: ', searchResults); // debug
     renderFilmCards(searchResults);
     checkForSavedFilms();
+    hideLoader()
   } catch(err) {
     document.getElementById('error-dialog').style.display = 'block';
     console.error(err); // debug
@@ -68,29 +78,21 @@ async function searchByTerm(searchTerm) {
 }
 
 function checkForSavedFilms() {
-  // compare search results array to the local storage array
-  //  - compare .imdbID props
-  // if a match, update button color and fa icon (check)
   const watchlist = getWatchlistFromStorage();
 
-  // ***ToDo: remove button, make this just a <div>, <p>
-  const savedBtnHtml = `
-    <button class="btn card-saved-btn">
+  const savedTagHtml = `
+    <p class="saved-film">
       <i class="fa-solid fa-circle-check"></i> Film Saved
-    </button>`
-
+    </p>`
+  // loop over searchResults to match films saved in watchlist
   for (let film of searchResults) {
-    for (let savedFilm of watchlist) {
-      if (film.imdbID === savedFilm.imdbID) {
-        console.log('found film(s) in watchlist: ', savedFilm)
-        // let btnDiv = document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`);
-        // btnDiv.innerHTML = savedBtnHtml;
-        document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`).innerHTML = savedBtnHtml;
+    for (let savedFilm of watchlist) { // loop over watchlist for each film
+      if (film.imdbID === savedFilm.imdbID) { // compare imdbID
+        document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`).innerHTML = savedTagHtml;
       }
     }
   }
 }
-
 
 // Save film to local storage watchlist
 function saveToWatchlist(filmToSave) { // filmToSave = imdbID
@@ -130,10 +132,8 @@ function removeFilmFromStorage(filmID) {
 // Render results to the DOM
 // watchlist boolean value to determine style of card button to apply (add or remove)
 function renderFilmCards(filmData, watchlistPage = false) { 
-  const resultsGrid = document.getElementById('results-grid'); // get results grid element
-  while (resultsGrid.firstChild) { // clear existing results content with while loop
-    resultsGrid.removeChild(resultsGrid.firstChild);
-  }  
+
+  clearResultsGrid();
 
   filmData.forEach(result => {
     const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
