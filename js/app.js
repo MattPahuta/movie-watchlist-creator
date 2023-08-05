@@ -57,9 +57,9 @@ async function searchByTerm(searchTerm) {
     return;
   }
   try {
-    clearResultsGrid();
-    errorToggle();
-    showLoader();
+    clearResultsGrid(); // clear previous results
+    errorToggle(); // toggle error message
+    showLoader(); // show the loader
     const res = await fetch(`${baseUrl}&s=${searchTerm}`)
     const data = await res.json();
     // get detailed results for each result
@@ -69,20 +69,23 @@ async function searchByTerm(searchTerm) {
       searchResults.push(data);
     }
     console.log('Search Results: ', searchResults); // debug
-    renderFilmCards(searchResults);
-    checkForSavedFilms();
-    hideLoader();
+    renderFilmCards(searchResults); // render the result cards
+    checkForSavedFilms(); // check for films already in watchlist
+    hideLoader(); // hide loader
   } catch(err) {
-    hideLoader();
-    errorToggle(err);
+    hideLoader(); // hide the loader
+    errorToggle(err); // show the error
     console.error(err); // debug
   }
 
 }
 
+// Handle error message display
 function errorToggle(err = false) {
   const errorDialog = document.getElementById('error-dialog');
-  err ? errorDialog.style.display = 'block' : errorDialog.style.display = 'none';
+  err 
+    ? errorDialog.style.display = 'block' 
+    : errorDialog.style.display = 'none';
 }
 
 function checkForSavedFilms() {
@@ -109,21 +112,26 @@ function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   const watchlist = getWatchlistFromStorage(); // get current watchlist from LS
 
   // check if film is already in the ls watchlist
-  for (let film of watchlist) { 
-    if (film.imdbID === filmObject.imdbID) {
-      alert('Film aleady added to watchlist!');
-      return;
-    }
-  }
+  // for (let film of watchlist) { 
+  //   if (film.imdbID === filmObject.imdbID) {
+  //     alert('Film aleady added to watchlist!');
+  //     return;
+  //   }
+  // }
 
   watchlist.push(filmObject); // add selected film to watchlist
   localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // set updated LS watchlist
   checkForSavedFilms();
+  updateCounter();
 }
 
-function getWatchListLength() {
-  const watchlist = getWatchlistFromStorage();
-  return watchlist.length;
+// Get count of film in watchlist
+function updateCounter() {
+  const counter = document.getElementById('counter');
+  const watchlistLength = getWatchlistFromStorage().length;
+  watchlistLength 
+    ? counter.textContent = `(${watchlistLength})`
+    : counter.textContent = '';
 }
 
 // Remove film from watchlist page
@@ -186,15 +194,13 @@ function renderFilmCards(filmData, watchlistPage = false) {
     resultsGrid.appendChild(card)
   });
 
-
 }
 
 // Router function
 function initializePage() {
   switch (document.body.id) {
     case 'home':
-      // initHome();
-      // add watchlist length to watchlist nav?
+      updateCounter();
       console.log('Welcome to the Party, pal');
       break;
     case 'watchlist':
@@ -205,10 +211,11 @@ function initializePage() {
   }  
 }
 
+// show loader
 function showLoader() {
   loader.style.display = 'grid';
 }
-
+// hide loader
 function hideLoader() {
   loader.style.display = 'none';
 }
