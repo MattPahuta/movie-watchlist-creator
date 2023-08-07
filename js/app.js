@@ -67,14 +67,12 @@ async function searchByTerm(searchTerm) {
       const data = await res.json();
       searchResults.push(data);
     }
-    console.log('Search Results: ', searchResults); // debug
     renderFilmCards(searchResults); // render the result cards
     checkForSavedFilms(); // check for films already in watchlist
     hideLoader(); // hide loader
   } catch(err) {
     hideLoader(); // hide the loader
     errorToggle(err); // show the error
-    console.error(err); // debug
   }
 
 }
@@ -88,7 +86,7 @@ function errorToggle(err = false) {
 }
 
 function checkForSavedFilms() {
-  const watchlist = getWatchlistFromStorage();
+  const watchlist = getWatchlistFromStorage(); // get the watchlist
 
   const savedTagHtml = `
     <p class="saved-film">
@@ -109,19 +107,10 @@ function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   // match clicked imdbID with matching film in search results
   const filmObject = searchResults.filter(film => film.imdbID === filmToSave)[0];
   const watchlist = getWatchlistFromStorage(); // get current watchlist from LS
-
-  // check if film is already in the ls watchlist
-  // for (let film of watchlist) { 
-  //   if (film.imdbID === filmObject.imdbID) {
-  //     alert('Film aleady added to watchlist!');
-  //     return;
-  //   }
-  // }
-
   watchlist.push(filmObject); // add selected film to watchlist
   localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // set updated LS watchlist
-  checkForSavedFilms();
-  updateCounter();
+  checkForSavedFilms(); // check for films already saved
+  updateCounter(); // update watchlist counter
 }
 
 // Get count of film in watchlist
@@ -149,9 +138,8 @@ function removeFilmFromStorage(filmID) {
 // Render results to the DOM
 // watchlist boolean value to determine style of card button to apply (add or remove)
 function renderFilmCards(filmData, watchlistPage = false) { 
-
   clearResultsGrid(); // clear any previous results
-
+  // loop through film data passed in
   filmData.forEach(result => {
     const { Poster, Title, imdbID, imdbRating, Runtime, Genre, Plot } = result;
 
@@ -190,9 +178,8 @@ function renderFilmCards(filmData, watchlistPage = false) {
         <p class="card-body">${Plot}</p>
       </div>
       `
-    resultsGrid.appendChild(card)
+    resultsGrid.appendChild(card);
   });
-
 }
 
 // Router function

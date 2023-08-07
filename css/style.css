@@ -1,7 +1,7 @@
 /*
 Author: Matt Pahuta
 https://www.mattpahuta.com
-Date: 
+Date: Aug 8, 2023
 
 COOLORS color palette link
 https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
@@ -28,7 +28,7 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
 
   /* font sizes */
   /* 12px (results meta), 14px (body), 18px (results - h2), 44px (h1) */
-  --fs-700: 2.75rem;
+  --fs-700: 2.5rem;
   --fs-600: 1.75rem;
   --fs-550: 1.25rem;
   --fs-500: 1.125rem;
@@ -40,7 +40,7 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
 
 @media (min-width: 600px) {
   :root {
-    --fs-700: 3.5rem;
+    --fs-700: 3.25rem;
     --fs-600: 2rem;
     --fs-550: 1.75rem;
     --fs-500: 1.25rem;
@@ -91,7 +91,26 @@ button > * {
   pointer-events: none;
 }
 
-/* for screen-readers only */
+.attribution { font-size: var(--fs-300); text-align: center; }
+.attribution a { color: var(--clr-ucla-blue); }
+
+.btn {
+	border: none;
+  padding: 0;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+  line-height: 1;
+	transition: 200ms all ease-in-out;
+}
+
+@media screen and (-ms-high-contrast: active) {
+  .btn {
+    border: 2px solid currentcolor;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -104,24 +123,32 @@ button > * {
   border: 0;
 }
 
+.error-dialog {
+  display: none;
+  color: var(--clr-rating-yellow);
+  font-size: var(--fs-550);
+  text-align: center;
+}
+
 /* General styles */
 body {
-  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   font-family: var(--ff-primary);
   font-size: var(--fs-400);
   background-color: var(--clr-raisin-black);
   color: var(--clr-white);
 }
 
-/* Header Styles */
-.page-title {
-  font-size: var(--fs-700);
-  font-weight: 700;
-  margin-bottom: 1rem;
+footer {
+  margin-top: auto;
+  padding: 1.5rem 0;
 }
 
+/* Header Styles */
 .header {
-  min-height: 25vh;
+  min-height: 30vh;
 	background-color: var(--clr-delft-blue);
 	background: url("../images/header-alt-1.jpg") var(--clr-header-filter);
 	background-repeat: no-repeat;
@@ -135,9 +162,16 @@ body {
   gap: 3rem;
 }
 
-/* update class name */
-.title-container {
-  text-align: center;
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.page-title {
+  font-size: var(--fs-700);
+  font-weight: 700;
 }
 
 .nav-list {
@@ -161,37 +195,16 @@ body {
   color: var(--clr-powder-blue);
 }
 
-@media (min-width: 600px) {
+@media (min-width: 740px) {
   .header {
     padding: 4rem 1.5rem;
   }
-
-  .title-container {
+  .header-content {
     width: 100%;
     max-width: 1160px;
-    display: flex;
-    align-items: center;
+    flex-direction: row;
     justify-content: space-between;
   }
-
-  .page-title {
-    margin-bottom: 0;
-  }
-}
-
-.watchlist-placeholder a {
-  font-size: var(--fs-550);
-}
-
-.watchlist-placeholder i {
-  margin-right: 0.5rem;;
-}
-
-.error-dialog {
-  display: none;
-  color: var(--clr-rating-yellow);
-  font-size: var(--fs-550);
-  text-align: center;
 }
 
 /* Search Form Styles */
@@ -224,25 +237,6 @@ body {
 .search-input:focus {
   border: 2px solid var(--clr-ucla-blue);
   outline: 3px solid transparent;
-}
-
-/* move up to components */
-.btn {
-	border: none;
-  padding: 0;
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-  line-height: 1;
-  /* for hover/active effect */
-	transition: 200ms all ease-in-out;
-}
-
-@media screen and (-ms-high-contrast: active) {
-  .btn {
-    border: 2px solid currentcolor;
-  }
 }
 
 .search-btn {
@@ -299,7 +293,6 @@ body {
   width: 100%;
   border-bottom: 2px solid var(--clr-silver);
 }
-
 
 .card-img {
   width: 100%;
@@ -397,15 +390,20 @@ body {
   color: var(--clr-sea-green);
 }
 
+.watchlist-placeholder a {
+  font-size: var(--fs-550);
+}
+
+.watchlist-placeholder i {
+  margin-right: 0.5rem;;
+}
+
 @media(min-width: 800px) {
-  /* make grid 1 column */
   .results-grid {
     padding: 3rem 2rem;
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-
-  /* change card orientation */
   .card {
     display: grid;
     grid-template-columns: max-content auto;
@@ -414,26 +412,21 @@ body {
     max-width: 50rem;
     padding-bottom: 2rem;
   }
-
   .card-content {
     padding: 0;
   }
-
   .card-img {
     height: 100%;
     max-width: 200px;
   }
-
   .card-title {
     font-size: var(--fs-550);
   }
-
   .card-add-btn,
   .card-saved-btn,
   .card-remove-btn {
     font-size: var(--fs-500);
   }
-
 }
 
 /*
