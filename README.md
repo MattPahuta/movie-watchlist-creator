@@ -41,7 +41,7 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 ### Links
 
 - [Scrimba Scrim](https://scrimba.com/scrim/cGZZp9Ha)
-- [Live Site]()
+- [Live Site](https://movie-watchlist-creator.vercel.app/index.html)
 
 ## My process
 

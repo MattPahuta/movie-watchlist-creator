@@ -2,7 +2,7 @@
   http://www.omdbapi.com/?apikey=[yourkey]&
   http://www.omdbapi.com/?t=batman
 */
-const baseUrl = `http://www.omdbapi.com/?apikey=9da4b049`;
+const baseUrl = `https://www.omdbapi.com/?apikey=9da4b049`;
 const searchResults = []; // Current search results
 const resultsGrid = document.getElementById('results-grid');
 const loader = document.getElementById('loader');
