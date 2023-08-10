@@ -4,7 +4,7 @@
 ## General refactor notes
 
 - Break API key and base url into seperate variables, make uppercase consts
-- Implement ternary operator in render function to better handle add/remove buttons on film cards
+
 - ToDo: refactor checkForSavedFilms function to account for updated async function
 
 ## Async function refactor notes

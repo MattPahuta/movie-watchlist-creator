@@ -1,15 +1,4 @@
-/*
-Author: Matt Pahuta
-https://www.mattpahuta.com
-Date: Aug 8, 2023
-
-COOLORS color palette link
-https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
-*/
-
-/* **************** */
 /* Custom Variables */
-/* **************** */
 :root {
   /* primary colors */
   --clr-delft-blue: hsla(216, 44%, 25%, 1);
@@ -18,23 +7,20 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
   --clr-sea-green: hsl(156, 86%, 28%);
   --clr-rating-yellow: hsla(40, 99%, 66%, 1);
   --clr-rating-yellow2: #fec552;
-
   /* default neutral colors */
   --clr-white: hsl(0, 0%, 100%); 
   --clr-ghost-white: hsl(252, 19%, 95%);
   --clr-silver: hsl(132, 4%, 76%);
   --clr-raisin-black: hsla(228, 25%, 12%, 1);
   --clr-header-filter: hsla(228, 25%, 12%, 0.9);
-
   /* font sizes */
-  /* 12px (results meta), 14px (body), 18px (results - h2), 44px (h1) */
   --fs-700: 2.5rem;
   --fs-600: 1.75rem;
   --fs-550: 1.25rem;
   --fs-500: 1.125rem;
   --fs-400: 1rem;   
   --fs-300: 0.875rem; 
-  /* font-family: 'Poppins', sans-serif; 400, 500, 700 */
+  /* font-family: 'Poppins', sans-serif; */
   --ff-primary: 'Poppins', sans-serif;
 }
 
@@ -56,13 +42,9 @@ https://coolors.co/161925-23395b-406e8e-8ea8c3-cbf7ed
   box-sizing: border-box;
 }
 
-* {
-  margin: 0;
-}
+* {  margin: 0; }
 
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
 body {
   line-height: 1.5;
@@ -82,9 +64,7 @@ p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
 }
 
-#root, #__next {
-  isolation: isolate;
-}
+#root, #__next { isolation: isolate; }
 
 /* Utilities and Components */
 button > * {
@@ -254,7 +234,6 @@ footer {
 	background: var(--clr-delft-blue);
 }
 
-
 /* Search results styles - movie cards */
 .film-placeholder,
 .watchlist-placeholder {
@@ -269,9 +248,7 @@ footer {
   margin-top: 8rem;
 }
 
-.fa-film {
-  font-size: 4rem;
-}
+.fa-film { font-size: 4rem; }
 
 /* use Grid for the results */
 .results-grid {
@@ -284,7 +261,6 @@ footer {
   justify-items: center;
   gap: 2.25rem;
 }
-
 
 /* movie card styles */
 .card {
@@ -429,11 +405,9 @@ footer {
   }
 }
 
-/*
-  Loader courtesy of Temani Afif
-  https://codepen.io/t_afif/pen/rNpbMvM
-*/
+/* Loader styles courtesy of Temani Afif: https://codepen.io/t_afif/pen/rNpbMvM */
 
+/* Loading Animation */
 .loading-wrapper {
   position: fixed;
   left: 0;
@@ -444,9 +418,8 @@ footer {
   place-items: center;
 }
 
-/* Loading Animation */
 .loader {
-  /* margin-inline: auto; */
+  margin-inline: auto;
   width: 150px; /* control the size */
   aspect-ratio: 1;
   display: none;

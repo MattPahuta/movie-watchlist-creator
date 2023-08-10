@@ -4,20 +4,23 @@
 */
 
 // *** ToDo: break api key and base url into seperate variables, make uppercase consts
-const baseUrl = `https://www.omdbapi.com/?apikey=9da4b049`;
-const searchResults = []; // Current search results
+const OMDB_API_KEY = '9da4b049';
+const BASE_URL = `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}`;
+
+let tempSearchResults = [];
+
 const resultsGrid = document.getElementById('results-grid');
 const loadingWrapper = document.querySelector('.loading-wrapper');
 const loader = document.getElementById('loader');
 
-// Listen for events on search form and film card buttons
-document.addEventListener('click', e => {
-  // search listener
+// Event Handling 2.0
+document.addEventListener('click', handleClickEvents);
+
+// Handle various events
+function handleClickEvents(e) {
+  // search events
   if (e.target.id === 'search-btn') {
-    e.preventDefault(); // prevent default film behavior
-    const searchInput = document.getElementById('search-input'); // get input element
-    searchByTerm(searchInput.value.trim()); // get input value and trim for uniformity
-    searchInput.value = ''; // clear input value
+    handleSearch(e);
   }
 
   const filmID = e.target.dataset.film; // unique film ID
@@ -30,7 +33,7 @@ document.addEventListener('click', e => {
     const filmCard = e.target.closest('.card'); // get button's parent card
     removeFilm(filmCard, filmID); // remove film from DOM and LS
   }
-})
+}
 
 // Get the watchlist from local storage
 function getWatchlistFromStorage() {
@@ -50,35 +53,70 @@ function clearResultsGrid() {
   } 
 }
 
-// Search OMDB by search term
+// Search OMDB by search term - v1.0
 // *** ToDo: implement parallel fetch request 
-async function searchByTerm(searchTerm) {
-  searchResults.length = 0; // clear previous search results
+// async function searchByTerm(searchTerm) {
+//   searchResults.length = 0; // clear previous search results
+
+//   if (!searchTerm) { // ensure a valid string was passed in
+//     alert('Enter a search term!');
+//     return;
+//   }
+//   try {
+//     clearResultsGrid(); // clear previous results
+//     errorToggle(); // toggle error message
+//     showLoader(); // show the loader
+//     const res = await fetch(`${baseUrl}&s=${searchTerm}`)
+//     const data = await res.json();
+//     // get detailed results for each result
+//     for (let film of data.Search) {
+//       const res = await fetch(`${baseUrl}&i=${film.imdbID}`); // fetch detailed info for each ID
+//       const data = await res.json();
+//       searchResults.push(data);
+//     }
+//     renderFilmCards(searchResults); // render the result cards
+//     checkForSavedFilms(); // check for films already in watchlist
+//     hideLoader(); // hide loader
+//   } catch(err) {
+//     hideLoader(); // hide the loader
+//     errorToggle(err); // show the error
+//   }
+// }
+
+async function handleSearch(e) {
+  e.preventDefault();
+  const searchInput = document.getElementById('search-input'); 
+  const searchTerm = searchInput.value.trim();
 
   if (!searchTerm) { // ensure a valid string was passed in
     alert('Enter a search term!');
     return;
   }
-  try {
-    clearResultsGrid(); // clear previous results
-    errorToggle(); // toggle error message
-    showLoader(); // show the loader
-    const res = await fetch(`${baseUrl}&s=${searchTerm}`)
-    const data = await res.json();
-    // get detailed results for each result
-    for (let film of data.Search) {
-      const res = await fetch(`${baseUrl}&i=${film.imdbID}`); // fetch detailed info for each ID
-      const data = await res.json();
-      searchResults.push(data);
-    }
-    renderFilmCards(searchResults); // render the result cards
-    checkForSavedFilms(); // check for films already in watchlist
-    hideLoader(); // hide loader
-  } catch(err) {
-    hideLoader(); // hide the loader
-    errorToggle(err); // show the error
-  }
 
+  try {
+    searchInput.value = '';
+    clearResultsGrid();
+    errorToggle();
+    showLoader();
+    // fetch search results:
+    const data = await fetchOMDBData(`${BASE_URL}&s=${searchTerm}`);
+    const searchResults = await Promise.all(data.Search
+      .map(film => fetchOMDBData(`${BASE_URL}&i=${film.imdbID}`)));
+
+    tempSearchResults = [...searchResults]; // ToDo: find a better way to do this?
+    renderFilmCards(searchResults);
+    checkForSavedFilms(searchResults);
+    hideLoader();
+  } catch (error) {
+    hideLoader();
+    errorToggle();
+  }
+}
+
+// async search utility function
+async function fetchOMDBData(url) {
+  const res = await fetch(url);
+  return res.json();
 }
 
 // Handle error message display
@@ -98,7 +136,7 @@ function checkForSavedFilms() {
       <i class="fa-solid fa-circle-check"></i> Film Saved
     </p>`
   // loop over searchResults to match films saved in watchlist
-  for (let film of searchResults) {
+  for (let film of tempSearchResults) {
     for (let savedFilm of watchlist) { // loop over watchlist for each film
       if (film.imdbID === savedFilm.imdbID) { // compare imdbID
         document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`).innerHTML = savedTagHtml;
@@ -110,7 +148,10 @@ function checkForSavedFilms() {
 // Save film to local storage watchlist
 function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   // match clicked imdbID with matching film in search results
-  const filmObject = searchResults.filter(film => film.imdbID === filmToSave)[0];
+  const filmObject = tempSearchResults.filter(film => film.imdbID === filmToSave)[0];
+
+
+
   const watchlist = getWatchlistFromStorage(); // get current watchlist from LS
   watchlist.push(filmObject); // add selected film to watchlist
   localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // set updated LS watchlist
@@ -154,15 +195,13 @@ function renderFilmCards(filmData, watchlistPage = false) {
     // placeholder for films without images
     const noImg = `https://placehold.co/300x444/fec552/1c1c1c?text=No+Image+Available`;
 
-    const addBtnHtml = `        
-    <button data-film="${imdbID}" class="btn card-add-btn">
-      <i class="fa-solid fa-circle-plus"></i> Watchlist
-    </button>`
-
-    const removeBtnHtml = `        
-    <button data-film="${imdbID}" class="btn card-remove-btn">
-      <i class="fa-solid fa-circle-minus"></i> Remove
-    </button>`
+    const btnHtml = watchlistPage
+      ? `<button data-film="${imdbID}" class="btn card-remove-btn">
+          <i class="fa-solid fa-circle-minus"></i> Remove
+         </button>`
+      : `<button data-film="${imdbID}" class="btn card-add-btn">
+          <i class="fa-solid fa-circle-plus"></i> Watchlist
+         </button>`
 
     card.innerHTML = `
       <a href="https://www.imdb.com/title/${imdbID}" target="_blank">
@@ -178,7 +217,7 @@ function renderFilmCards(filmData, watchlistPage = false) {
           <span class="card-genre">${Genre}</span>
         </div>
           <div class="btn-container" data-btn-container="${imdbID}">
-          ${watchlistPage ? removeBtnHtml : addBtnHtml}
+          ${btnHtml}
           </div>
         <p class="card-body">${Plot}</p>
       </div>
@@ -192,7 +231,7 @@ function initializePage() {
   switch (document.body.id) {
     case 'home':
       updateCounter();
-      console.log('Welcome to the Party, pal');
+      // console.log('Welcome to the Party, pal');
       break;
     case 'watchlist':
       if (getWatchlistFromStorage().length) {
@@ -203,6 +242,8 @@ function initializePage() {
 }
 
 // show loader
+// *** ToDo: refactor loader/loadingWrapper styles
+// place inside the resultsGrid? Make resultsGrid 100% height? 
 function showLoader() {
   loadingWrapper.style.display = 'grid';
   loader.style.display = 'grid';
