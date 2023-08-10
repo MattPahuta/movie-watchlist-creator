@@ -433,9 +433,20 @@ footer {
   Loader courtesy of Temani Afif
   https://codepen.io/t_afif/pen/rNpbMvM
 */
+
+.loading-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  display: none;
+  place-items: center;
+}
+
 /* Loading Animation */
 .loader {
-  margin-inline: auto;
+  /* margin-inline: auto; */
   width: 150px; /* control the size */
   aspect-ratio: 1;
   display: none;

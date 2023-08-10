@@ -2,9 +2,12 @@
   http://www.omdbapi.com/?apikey=[yourkey]&
   http://www.omdbapi.com/?t=batman
 */
+
+// *** ToDo: break api key and base url into seperate variables, make uppercase consts
 const baseUrl = `https://www.omdbapi.com/?apikey=9da4b049`;
 const searchResults = []; // Current search results
 const resultsGrid = document.getElementById('results-grid');
+const loadingWrapper = document.querySelector('.loading-wrapper');
 const loader = document.getElementById('loader');
 
 // Listen for events on search form and film card buttons
@@ -48,6 +51,7 @@ function clearResultsGrid() {
 }
 
 // Search OMDB by search term
+// *** ToDo: implement parallel fetch request 
 async function searchByTerm(searchTerm) {
   searchResults.length = 0; // clear previous search results
 
@@ -85,6 +89,7 @@ function errorToggle(err = false) {
     : errorDialog.style.display = 'none';
 }
 
+// Check search results for films already saved to WL, mark as such
 function checkForSavedFilms() {
   const watchlist = getWatchlistFromStorage(); // get the watchlist
 
@@ -199,10 +204,12 @@ function initializePage() {
 
 // show loader
 function showLoader() {
+  loadingWrapper.style.display = 'grid';
   loader.style.display = 'grid';
 }
 // hide loader
 function hideLoader() {
+  loadingWrapper.style.display = 'none';
   loader.style.display = 'none';
 }
 
