@@ -20,8 +20,8 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 
 - Develop a two page website: index.html and watchlist.html
 - Design site according to supplied figma design comp
-- index.html: search page, calls to OMDB API with the term searched, displaying 10 results
-- Each result should be displayed on page's results section
+- index.html: search page, calls to OMDB API with the term searched, displaying results
+- Each result should be displayed within page's results section
 - Each result should feature a button to save film to watchlist
 - watchlist.html loads and displays the watchlist, saved using local storage
 - Each result displayed should feature a button to remove film from watchlist page and local storage
@@ -30,7 +30,8 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 
 - Film result images link to the film's external IMDB page
 - Search result items already saved to watchlist are identified
-- Number of watchlist items saved displayed on home page
+- Number of watchlist items saved displayed on home page via counter
+- Added a loading animation for film searches in-progress
 - Additional design customizations and enhancements
 
 ### Screenshot
@@ -40,7 +41,7 @@ This is a solution to the Movie Watchlist Creator solo project, as part of the S
 
 ### Links
 
-- [Scrimba Scrim](https://scrimba.com/scrim/cGZZp9Ha)
+- [Scrimba Scrim](https://scrimba.com/scrim/cGZZ2dTQ)
 - [Live Site](https://movie-watchlist-creator.vercel.app/index.html)
 
 ## My process
@@ -72,6 +73,40 @@ function checkForSavedFilms() {
         document.querySelector(`[data-btn-container="${savedFilm.imdbID}"]`).innerHTML = savedTagHtml;
       }
     }
+  }
+}
+```
+
+It looks like a lot is going on in my handleSearch function, but earlier versions of this code were quite a bit more convoluted. Thanks to the helpful mentors at Scrimba (shoutout to Amy!) I was able to separate concerns in my code much more effectively and was able to implement Promise.all successfully in a project for the first time. Very excited about using these techniques and principles moving forward.
+
+```js
+async function handleSearch(e) {
+  e.preventDefault();
+  const searchInput = document.getElementById('search-input'); 
+  const searchTerm = searchInput.value.trim();
+
+  if (!searchTerm) { // ensure a valid string was passed in
+    alert('Enter a search term!');
+    return;
+  }
+
+  try {
+    searchInput.value = '';
+    clearResultsGrid(); // clear previous results
+    errorToggle(); // error encountered?
+    showLoader(); // show the loading animation
+    // fetch search results:
+    const data = await fetchOMDBData(`${BASE_URL}&s=${searchTerm}`);
+    const searchResults = await Promise.all(data.Search
+      .map(film => fetchOMDBData(`${BASE_URL}&i=${film.imdbID}`)));
+
+    tempSearchResults = [...searchResults]; // populate temp array for other funcs
+    renderFilmCards(searchResults); // render film cards
+    checkForSavedFilms(searchResults); // check result films for those already saved
+    hideLoader(); // hide loading animation
+  } catch (error) {
+    hideLoader();
+    errorToggle();
   }
 }
 ```

@@ -406,7 +406,6 @@ footer {
 }
 
 /* Loader styles courtesy of Temani Afif: https://codepen.io/t_afif/pen/rNpbMvM */
-
 /* Loading Animation */
 .loading-wrapper {
   position: fixed;
@@ -422,7 +421,7 @@ footer {
   margin-inline: auto;
   width: 150px; /* control the size */
   aspect-ratio: 1;
-  display: none;
+  display: grid;
   -webkit-mask: conic-gradient(from 22deg, #0003,#000);
           mask: conic-gradient(from 22deg, #0003,#000);
   animation: load 1s steps(8) infinite;

@@ -1,17 +1,14 @@
-/* OMDb API: http://www.omdbapi.com/?i=tt3896198&apikey=9da4b049
+/* OMDb API:
   http://www.omdbapi.com/?apikey=[yourkey]&
   http://www.omdbapi.com/?t=batman
 */
-
-// *** ToDo: break api key and base url into seperate variables, make uppercase consts
 const OMDB_API_KEY = '9da4b049';
 const BASE_URL = `https://www.omdbapi.com/?apikey=${OMDB_API_KEY}`;
 
-let tempSearchResults = [];
+let tempSearchResults = []; // use to save data to LS, check results against LS saved data
 
 const resultsGrid = document.getElementById('results-grid');
 const loadingWrapper = document.querySelector('.loading-wrapper');
-const loader = document.getElementById('loader');
 
 // Event Handling 2.0
 document.addEventListener('click', handleClickEvents);
@@ -53,36 +50,7 @@ function clearResultsGrid() {
   } 
 }
 
-// Search OMDB by search term - v1.0
-// *** ToDo: implement parallel fetch request 
-// async function searchByTerm(searchTerm) {
-//   searchResults.length = 0; // clear previous search results
-
-//   if (!searchTerm) { // ensure a valid string was passed in
-//     alert('Enter a search term!');
-//     return;
-//   }
-//   try {
-//     clearResultsGrid(); // clear previous results
-//     errorToggle(); // toggle error message
-//     showLoader(); // show the loader
-//     const res = await fetch(`${baseUrl}&s=${searchTerm}`)
-//     const data = await res.json();
-//     // get detailed results for each result
-//     for (let film of data.Search) {
-//       const res = await fetch(`${baseUrl}&i=${film.imdbID}`); // fetch detailed info for each ID
-//       const data = await res.json();
-//       searchResults.push(data);
-//     }
-//     renderFilmCards(searchResults); // render the result cards
-//     checkForSavedFilms(); // check for films already in watchlist
-//     hideLoader(); // hide loader
-//   } catch(err) {
-//     hideLoader(); // hide the loader
-//     errorToggle(err); // show the error
-//   }
-// }
-
+// Search OMDB by search term - v2.0
 async function handleSearch(e) {
   e.preventDefault();
   const searchInput = document.getElementById('search-input'); 
@@ -95,18 +63,18 @@ async function handleSearch(e) {
 
   try {
     searchInput.value = '';
-    clearResultsGrid();
-    errorToggle();
-    showLoader();
+    clearResultsGrid(); // clear previous results
+    errorToggle(); // error encountered?
+    showLoader(); // show the loading animation
     // fetch search results:
     const data = await fetchOMDBData(`${BASE_URL}&s=${searchTerm}`);
     const searchResults = await Promise.all(data.Search
       .map(film => fetchOMDBData(`${BASE_URL}&i=${film.imdbID}`)));
 
-    tempSearchResults = [...searchResults]; // ToDo: find a better way to do this?
-    renderFilmCards(searchResults);
-    checkForSavedFilms(searchResults);
-    hideLoader();
+    tempSearchResults = [...searchResults]; // populate temp array for other funcs
+    renderFilmCards(searchResults); // render film cards
+    checkForSavedFilms(searchResults); // check result films for those already saved
+    hideLoader(); // hide loading animation
   } catch (error) {
     hideLoader();
     errorToggle();
@@ -149,9 +117,6 @@ function checkForSavedFilms() {
 function saveToWatchlist(filmToSave) { // filmToSave = imdbID
   // match clicked imdbID with matching film in search results
   const filmObject = tempSearchResults.filter(film => film.imdbID === filmToSave)[0];
-
-
-
   const watchlist = getWatchlistFromStorage(); // get current watchlist from LS
   watchlist.push(filmObject); // add selected film to watchlist
   localStorage.setItem('myWatchlist', JSON.stringify(watchlist)); // set updated LS watchlist
@@ -182,7 +147,6 @@ function removeFilmFromStorage(filmID) {
 }
 
 // Render results to the DOM
-// watchlist boolean value to determine style of card button to apply (add or remove)
 function renderFilmCards(filmData, watchlistPage = false) { 
   clearResultsGrid(); // clear any previous results
   // loop through film data passed in
@@ -242,16 +206,12 @@ function initializePage() {
 }
 
 // show loader
-// *** ToDo: refactor loader/loadingWrapper styles
-// place inside the resultsGrid? Make resultsGrid 100% height? 
 function showLoader() {
   loadingWrapper.style.display = 'grid';
-  loader.style.display = 'grid';
 }
 // hide loader
 function hideLoader() {
   loadingWrapper.style.display = 'none';
-  loader.style.display = 'none';
 }
 
 initializePage();
